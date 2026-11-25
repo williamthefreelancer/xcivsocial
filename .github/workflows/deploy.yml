@@ -34,7 +34,7 @@ jobs:
           remote_path: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/themes/xciv-social/
           sftp_only: true
           delete_remote_files: false
-          sftp_args: '-o StrictHostKeyChecking=no'
+          sftpArgs: '-o StrictHostKeyChecking=no'
 
       - name: Deploy XCIV Social Core plugin
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -47,4 +47,4 @@ jobs:
           remote_path: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/plugins/xciv-social-core/
           sftp_only: true
           delete_remote_files: false
-          sftp_args: '-o StrictHostKeyChecking=no'
+          sftpArgs: '-o StrictHostKeyChecking=no'
