@@ -534,6 +534,120 @@ body.admin-bar .xciv-sidebar {
   animation: xciv-rise 0.45s ease both;
 }
 
+.xciv-admission__head {
+  max-width: 40rem;
+}
+
+.xciv-admission__eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--xciv-accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.xciv-admission__progress {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  max-width: 40rem;
+}
+
+.xciv-admission__progress li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--xciv-line);
+  color: var(--xciv-muted);
+  font-size: 0.85rem;
+  background: rgba(21, 26, 31, 0.45);
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+
+.xciv-admission__progress li span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid currentColor;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.xciv-admission__progress li.is-active {
+  color: var(--xciv-ink);
+  border-color: rgba(196, 163, 90, 0.55);
+  background: rgba(196, 163, 90, 0.08);
+}
+
+.xciv-admission__progress li.is-complete {
+  color: var(--xciv-accent);
+  border-color: rgba(196, 163, 90, 0.35);
+}
+
+.xciv-admission__form {
+  max-width: 40rem;
+}
+
+.xciv-step__intro {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.xciv-step__intro h2 {
+  margin: 0;
+  font-family: var(--xciv-font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+}
+
+.xciv-step__kicker {
+  margin: 0;
+  color: var(--xciv-accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.xciv-step__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.xciv-form__status.is-error {
+  color: #e8a0a0;
+}
+
+.xciv-admission__success {
+  max-width: 36rem;
+  margin-top: 2rem;
+  padding: 1.5rem 1.35rem;
+  border: 1px solid rgba(196, 163, 90, 0.4);
+  background: rgba(196, 163, 90, 0.08);
+  animation: xciv-rise 0.45s ease both;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.xciv-admission__success h2 {
+  margin: 0;
+  font-family: var(--xciv-font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+}
+
+.xciv-admission__success p {
+  margin: 0;
+}
+
 .xciv-footer {
   border-top: 1px solid var(--xciv-line);
   padding: 1.5rem 0 2rem;
@@ -3194,6 +3308,10 @@ iframe.xciv-video__media {
 
   .xciv-user-menu__name {
     display: none;
+  }
+
+  .xciv-admission__progress {
+    grid-template-columns: 1fr 1fr;
   }
 
   .xciv-composer__top,

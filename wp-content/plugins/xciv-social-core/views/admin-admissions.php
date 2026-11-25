@@ -12,11 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $answer_labels = array(
-	'sovereignty' => __( 'Sovereignty', 'xciv-social-core' ),
-	'lifestyle'   => __( 'Lifestyle', 'xciv-social-core' ),
-	'bring'       => __( 'Contribution', 'xciv-social-core' ),
-	'seek'        => __( 'Seeking', 'xciv-social-core' ),
-	'proof_url'   => __( 'Proof link', 'xciv-social-core' ),
+	'city'         => __( 'City / base', 'xciv-social-core' ),
+	'title_role'   => __( 'Title / role', 'xciv-social-core' ),
+	'organization' => __( 'Organization', 'xciv-social-core' ),
+	'sovereignty'  => __( 'Sovereignty', 'xciv-social-core' ),
+	'lifestyle'    => __( 'Lifestyle', 'xciv-social-core' ),
+	'bring'        => __( 'Contribution', 'xciv-social-core' ),
+	'seek'         => __( 'Seeking', 'xciv-social-core' ),
+	'proof_url'    => __( 'Proof link', 'xciv-social-core' ),
+	'how_heard'    => __( 'How they heard', 'xciv-social-core' ),
 );
 
 $vertical_labels = array(

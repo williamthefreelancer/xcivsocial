@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'XCIV_THEME_VERSION', '0.3.3' );
+define( 'XCIV_THEME_VERSION', '0.3.4' );
 define( 'XCIV_THEME_DIR', get_template_directory() );
 define( 'XCIV_THEME_URI', get_template_directory_uri() );
 

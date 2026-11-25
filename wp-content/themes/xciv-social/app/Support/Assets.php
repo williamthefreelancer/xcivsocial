@@ -63,6 +63,17 @@ final class Assets {
 			'admission.js'
 		);
 
+		if ( wp_script_is( 'xciv-admission', 'enqueued' ) ) {
+			wp_localize_script(
+				'xciv-admission',
+				'xcivAdmission',
+				array(
+					'admissionUrl' => esc_url_raw( rest_url( 'xciv/v1/admission' ) ),
+					'restNonce'   => wp_create_nonce( 'wp_rest' ),
+				)
+			);
+		}
+
 		self::enqueue_template_script(
 			'page-templates/member-feed.php',
 			'xciv-feed',

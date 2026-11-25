@@ -100,25 +100,82 @@ final class AdmissionsPage {
 		}
 
 		$new_status = $action === 'approve' ? 'approved' : 'rejected';
+		$user_id    = ! empty( $row['user_id'] ) ? (int) $row['user_id'] : 0;
+
+		if ( $action === 'approve' ) {
+			$user_id = self::ensure_member_user( $row, $user_id );
+		}
 
 		$wpdb->update(
 			$table,
 			array(
+				'user_id'     => $user_id ?: null,
 				'status'      => $new_status,
 				'owner_notes' => $notes,
 				'updated_at'  => current_time( 'mysql' ),
 			),
 			array( 'id' => $id ),
-			array( '%s', '%s', '%s' ),
+			array( '%d', '%s', '%s', '%s' ),
 			array( '%d' )
 		);
 
-		if ( $action === 'approve' && ! empty( $row['user_id'] ) ) {
-			$user = new \WP_User( (int) $row['user_id'] );
-			$user->set_role( RolesService::ROLE_MEMBER );
-		}
-
 		wp_safe_redirect( admin_url( 'admin.php?page=xciv-social-admissions&updated=1' ) );
 		exit;
+	}
+
+	/**
+	 * Resolve or create a WP user and grant membership on approve.
+	 *
+	 * @param array<string,mixed> $row Application row.
+	 */
+	private static function ensure_member_user( array $row, int $user_id ): int {
+		$email     = sanitize_email( (string) $row['email'] );
+		$full_name = sanitize_text_field( (string) $row['full_name'] );
+
+		if ( ! $user_id && is_email( $email ) ) {
+			$existing = get_user_by( 'email', $email );
+			if ( $existing instanceof \WP_User ) {
+				$user_id = (int) $existing->ID;
+			} else {
+				$login = sanitize_user( current( explode( '@', $email ) ), true );
+				if ( '' === $login ) {
+					$login = 'xciv';
+				}
+				$base = $login;
+				$n    = 1;
+				while ( username_exists( $login ) ) {
+					$login = $base . $n;
+					++$n;
+				}
+
+				$user_id = wp_create_user( $login, wp_generate_password( 24, true, true ), $email );
+				if ( is_wp_error( $user_id ) ) {
+					return 0;
+				}
+				$user_id = (int) $user_id;
+
+				wp_update_user(
+					array(
+						'ID'           => $user_id,
+						'display_name' => $full_name ?: $login,
+						'nickname'     => $full_name ?: $login,
+						'first_name'   => $full_name,
+					)
+				);
+
+				if ( function_exists( 'wp_send_new_user_notifications' ) ) {
+					wp_send_new_user_notifications( $user_id, 'user' );
+				}
+			}
+		}
+
+		if ( ! $user_id || user_can( $user_id, 'manage_options' ) ) {
+			return $user_id;
+		}
+
+		$user = new \WP_User( $user_id );
+		$user->set_role( RolesService::ROLE_MEMBER );
+
+		return $user_id;
 	}
 }
