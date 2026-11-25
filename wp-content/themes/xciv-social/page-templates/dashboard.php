@@ -58,8 +58,9 @@ $attendee_chats  = AttendeeChats::threads();
 				<?php
 				$briefing       = OnlineEventFunnel::briefing();
 				$briefing_url   = (string) apply_filters( 'xciv_dashboard_briefing_embed', $briefing['url'] );
-				$briefing_embed = VideoEmbed::resolve( $briefing_url );
+				$briefing_embed = class_exists( VideoEmbed::class ) ? VideoEmbed::resolve( $briefing_url ) : null;
 				$has_embed      = is_array( $briefing_embed );
+				$settings_url   = admin_url( 'admin.php?page=xciv-social-settings&tab=dashboard' );
 				?>
 				<header class="xciv-panel__head">
 					<p class="xciv-dashboard__eyebrow xciv-muted"><?php esc_html_e( 'Featured briefing', 'xciv-social' ); ?></p>
@@ -78,27 +79,37 @@ $attendee_chats  = AttendeeChats::threads();
 					>
 						<div class="xciv-video__frame<?php echo $has_embed ? '' : ' is-empty'; ?>" data-video-frame>
 							<div class="xciv-video__poster" data-video-poster aria-hidden="true"></div>
-							<button
-								type="button"
-								class="xciv-video__play"
-								data-video-play
-								aria-label="<?php echo $has_embed ? esc_attr__( 'Play briefing', 'xciv-social' ) : esc_attr__( 'Briefing embed unavailable', 'xciv-social' ); ?>"
-								<?php disabled( ! $has_embed ); ?>
-							>
-								<span class="xciv-video__play-icon" aria-hidden="true"></span>
-							</button>
-							<div class="xciv-video__meta" data-video-meta aria-hidden="true">
-								<span><?php esc_html_e( 'XCIV Briefing', 'xciv-social' ); ?></span>
-								<span><?php echo $has_embed ? esc_html( strtoupper( (string) $briefing_embed['provider'] ) ) : esc_html__( 'Embed', 'xciv-social' ); ?></span>
-							</div>
+							<?php if ( $has_embed ) : ?>
+								<button
+									type="button"
+									class="xciv-video__play"
+									data-video-play
+									aria-label="<?php esc_attr_e( 'Play briefing', 'xciv-social' ); ?>"
+								>
+									<span class="xciv-video__play-icon" aria-hidden="true"></span>
+								</button>
+								<div class="xciv-video__meta" data-video-meta aria-hidden="true">
+									<span><?php esc_html_e( 'XCIV Briefing', 'xciv-social' ); ?></span>
+									<span><?php echo esc_html( strtoupper( (string) $briefing_embed['provider'] ) ); ?></span>
+								</div>
+							<?php else : ?>
+								<div class="xciv-video__empty" role="status">
+									<p><?php esc_html_e( 'Briefing video coming soon.', 'xciv-social' ); ?></p>
+									<?php if ( current_user_can( 'manage_options' ) ) : ?>
+										<p class="xciv-muted">
+											<a href="<?php echo esc_url( $settings_url ); ?>">
+												<?php esc_html_e( 'Add a YouTube, Vimeo, or Bunny URL in XCIV Social → Settings → Member dashboard.', 'xciv-social' ); ?>
+											</a>
+										</p>
+									<?php endif; ?>
+								</div>
+							<?php endif; ?>
 						</div>
-						<figcaption class="xciv-video__caption xciv-muted">
-							<?php
-							echo $has_embed
-								? esc_html__( 'Member briefing — press play to watch.', 'xciv-social' )
-								: esc_html__( 'Member briefing player — set a YouTube, Vimeo, or Bunny Stream URL via xciv_dashboard_briefing_embed.', 'xciv-social' );
-							?>
-						</figcaption>
+						<?php if ( $has_embed ) : ?>
+							<figcaption class="xciv-video__caption xciv-muted">
+								<?php esc_html_e( 'Member briefing — press play to watch.', 'xciv-social' ); ?>
+							</figcaption>
+						<?php endif; ?>
 					</figure>
 				</div>
 			</section>

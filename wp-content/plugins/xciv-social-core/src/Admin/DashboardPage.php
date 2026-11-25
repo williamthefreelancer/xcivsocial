@@ -75,12 +75,16 @@ final class DashboardPage {
 		$member_count       = 0;
 
 		$apps_table = ApplicationTable::table_name();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$pending_admissions = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$apps_table} WHERE status = 'pending_review'" );
+		if ( $apps_table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $apps_table ) ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$pending_admissions = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$apps_table} WHERE status = 'pending_review'" );
+		}
 
 		$wait_table = WaitlistTable::table_name();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$waitlist_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wait_table}" );
+		if ( $wait_table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wait_table ) ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$waitlist_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wait_table}" );
+		}
 
 		$member_count = (int) count(
 			get_users(

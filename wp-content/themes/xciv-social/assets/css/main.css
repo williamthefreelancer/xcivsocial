@@ -1134,6 +1134,29 @@ iframe.xciv-video__media {
   animation: xciv-rise 0.55s ease both;
 }
 
+.xciv-video__empty {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  gap: 0.45rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.xciv-video__empty p {
+  margin: 0;
+  max-width: 28rem;
+  justify-self: center;
+}
+
+.xciv-video__empty a {
+  color: var(--xciv-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .xciv-video__frame.is-playing {
   background: #0c0f12;
 }

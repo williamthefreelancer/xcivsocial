@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'XCIV_CORE_VERSION', '0.2.0' );
+define( 'XCIV_CORE_VERSION', '0.2.1' );
 define( 'XCIV_CORE_FILE', __FILE__ );
 define( 'XCIV_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'XCIV_CORE_URL', plugin_dir_url( __FILE__ ) );
