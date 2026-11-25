@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace XCIV\Core\Support;
 
 use XCIV\Core\Admin\AdmissionsPage;
+use XCIV\Core\Admin\DashboardPage;
+use XCIV\Core\Admin\SettingsPage;
 use XCIV\Core\Admin\WaitlistPage;
 use XCIV\Core\Models\WaitlistTable;
 use XCIV\Core\Rest\WaitlistController;
@@ -21,6 +23,8 @@ final class Plugin {
 	public static function init(): void {
 		RolesService::register_roles();
 		self::maybe_upgrade();
+		DashboardPage::init();
+		SettingsPage::init();
 		AdmissionsPage::init();
 		WaitlistPage::init();
 		WaitlistController::init();

@@ -1,6 +1,7 @@
 <?php
 /**
- * Demo data for the online event funnel (sales → thank-you → broadcast).
+ * Online event funnel data (sales → thank-you → broadcast).
+ * Reads XCIV Social Core settings when available; falls back to theme defaults.
  *
  * @package XCIV_Social
  */
@@ -17,25 +18,32 @@ final class OnlineEventFunnel {
 	 * @return array<string, mixed>
 	 */
 	public static function event(): array {
-		$meet = self::meet_url();
+		$settings = self::core_settings();
+		$general  = is_array( $settings['general'] ?? null ) ? $settings['general'] : array();
+		$event    = is_array( $settings['event'] ?? null ) ? $settings['event'] : array();
+
+		$meet = self::meet_url_from( is_string( $event['meet_url'] ?? null ) ? (string) $event['meet_url'] : '' );
+
+		$host       = (string) ( $general['host_company'] ?? __( 'THE SUPER NINETY FOUR EVENTS COMPANY', 'xciv-social' ) );
+		$host_short = (string) ( $general['host_short'] ?? __( 'Super Ninety Four Events', 'xciv-social' ) );
 
 		return array(
-			'id'           => 'virtual-salon-apr',
-			'slug'         => 'virtual-salon',
-			'title'        => __( 'Virtual Salon: Warm Intros After Dark', 'xciv-social' ),
-			'subtitle'     => __( 'A live online room for members and invited guests — broadcast, polls, and Q&A in one place.', 'xciv-social' ),
-			'host'         => __( 'THE SUPER NINETY FOUR EVENTS COMPANY', 'xciv-social' ),
-			'host_short'   => __( 'Super Ninety Four Events', 'xciv-social' ),
-			'date_label'   => __( 'Thursday, April 16, 2026', 'xciv-social' ),
-			'time_label'   => __( '8:00–9:30 PM ET', 'xciv-social' ),
-			'format'       => __( 'Online · Google Meet', 'xciv-social' ),
-			'meet_url'     => $meet,
-			'capacity'     => 120,
-			'seats_left'   => 34,
-			'cover'        => '',
-			'sales_path'   => '/event-sales/',
-			'thanks_path'  => '/event-thank-you/',
-			'broadcast_path' => '/event-broadcast/',
+			'id'             => (string) ( $event['id'] ?? 'virtual-salon-apr' ),
+			'slug'           => (string) ( $event['slug'] ?? 'virtual-salon' ),
+			'title'          => (string) ( $event['title'] ?? __( 'Virtual Salon: Warm Intros After Dark', 'xciv-social' ) ),
+			'subtitle'       => (string) ( $event['subtitle'] ?? __( 'A live online room for members and invited guests — broadcast, polls, and Q&A in one place.', 'xciv-social' ) ),
+			'host'           => $host,
+			'host_short'     => $host_short,
+			'date_label'     => (string) ( $event['date_label'] ?? __( 'Thursday, April 16, 2026', 'xciv-social' ) ),
+			'time_label'     => (string) ( $event['time_label'] ?? __( '8:00–9:30 PM ET', 'xciv-social' ) ),
+			'format'         => (string) ( $event['format'] ?? __( 'Online · Google Meet', 'xciv-social' ) ),
+			'meet_url'       => $meet,
+			'capacity'       => (int) ( $event['capacity'] ?? 120 ),
+			'seats_left'     => (int) ( $event['seats_left'] ?? 34 ),
+			'cover'          => '',
+			'sales_path'     => (string) ( $event['sales_path'] ?? '/event-sales/' ),
+			'thanks_path'    => (string) ( $event['thanks_path'] ?? '/event-thank-you/' ),
+			'broadcast_path' => (string) ( $event['broadcast_path'] ?? '/event-broadcast/' ),
 		);
 	}
 
@@ -45,27 +53,33 @@ final class OnlineEventFunnel {
 	 * @return list<array<string, mixed>>
 	 */
 	public static function tickets(): array {
+		$settings = self::core_settings();
+		$rows     = $settings['tickets'] ?? null;
+		if ( is_array( $rows ) && $rows !== array() ) {
+			return self::normalize_priced_rows( $rows, true );
+		}
+
 		return array(
 			array(
-				'id'          => 'general',
-				'name'        => __( 'General Admission', 'xciv-social' ),
-				'price'       => 45,
-				'desc'        => __( 'Live access to the salon, chat feed, and post-event replay link.', 'xciv-social' ),
-				'popular'     => false,
+				'id'      => 'general',
+				'name'    => __( 'General Admission', 'xciv-social' ),
+				'price'   => 45,
+				'desc'    => __( 'Live access to the salon, chat feed, and post-event replay link.', 'xciv-social' ),
+				'popular' => false,
 			),
 			array(
-				'id'          => 'vip',
-				'name'        => __( 'VIP Circle', 'xciv-social' ),
-				'price'       => 95,
-				'desc'        => __( 'Priority seating in Meet breakouts, name shout-out, and VIP Q&A lane.', 'xciv-social' ),
-				'popular'     => true,
+				'id'      => 'vip',
+				'name'    => __( 'VIP Circle', 'xciv-social' ),
+				'price'   => 95,
+				'desc'    => __( 'Priority seating in Meet breakouts, name shout-out, and VIP Q&A lane.', 'xciv-social' ),
+				'popular' => true,
 			),
 			array(
-				'id'          => 'host-pass',
-				'name'        => __( 'Host Pass', 'xciv-social' ),
-				'price'       => 180,
-				'desc'        => __( 'Bring a +1, co-host a 5-minute intro, and unlock the private after-room.', 'xciv-social' ),
-				'popular'     => false,
+				'id'      => 'host-pass',
+				'name'    => __( 'Host Pass', 'xciv-social' ),
+				'price'   => 180,
+				'desc'    => __( 'Bring a +1, co-host a 5-minute intro, and unlock the private after-room.', 'xciv-social' ),
+				'popular' => false,
 			),
 		);
 	}
@@ -76,6 +90,12 @@ final class OnlineEventFunnel {
 	 * @return list<array<string, mixed>>
 	 */
 	public static function addons(): array {
+		$settings = self::core_settings();
+		$rows     = $settings['addons'] ?? null;
+		if ( is_array( $rows ) && $rows !== array() ) {
+			return self::normalize_priced_rows( $rows, false );
+		}
+
 		return array(
 			array(
 				'id'    => 'replay',
@@ -104,6 +124,25 @@ final class OnlineEventFunnel {
 	 * @return list<array<string, mixed>>
 	 */
 	public static function upsells(): array {
+		$settings = self::core_settings();
+		$rows     = $settings['upsells'] ?? null;
+		if ( is_array( $rows ) && $rows !== array() ) {
+			$out = array();
+			foreach ( $rows as $row ) {
+				if ( ! is_array( $row ) ) {
+					continue;
+				}
+				$out[] = array(
+					'id'    => (string) ( $row['id'] ?? '' ),
+					'name'  => (string) ( $row['name'] ?? '' ),
+					'price' => (float) ( $row['price'] ?? 0 ),
+					'desc'  => (string) ( $row['desc'] ?? '' ),
+					'cta'   => (string) ( $row['cta'] ?? __( 'Add', 'xciv-social' ) ),
+				);
+			}
+			return $out;
+		}
+
 		return array(
 			array(
 				'id'    => 'membership',
@@ -119,6 +158,22 @@ final class OnlineEventFunnel {
 				'desc'  => __( 'Free hold on the next paid road trip — convert when tickets drop.', 'xciv-social' ),
 				'cta'   => __( 'Hold my seat', 'xciv-social' ),
 			),
+		);
+	}
+
+	/**
+	 * Member dashboard briefing fields.
+	 *
+	 * @return array{url: string, title: string, desc: string}
+	 */
+	public static function briefing(): array {
+		$settings = self::core_settings();
+		$dash     = is_array( $settings['dashboard'] ?? null ) ? $settings['dashboard'] : array();
+
+		return array(
+			'url'   => (string) ( $dash['briefing_url'] ?? '' ),
+			'title' => (string) ( $dash['briefing_title'] ?? __( 'How warm intros compound inside a closed room', 'xciv-social' ) ),
+			'desc'  => (string) ( $dash['briefing_desc'] ?? __( 'A short member briefing on cadence, reciprocity, and what to bring to the next gathering.', 'xciv-social' ) ),
 		);
 	}
 
@@ -189,23 +244,11 @@ final class OnlineEventFunnel {
 	}
 
 	/**
-	 * Resolve Meet URL: ?meet=… query, then theme mod, then demo placeholder.
+	 * Resolve Meet URL: ?meet=… query, then settings / theme mod, then demo placeholder.
 	 */
 	public static function meet_url(): string {
-		if ( isset( $_GET['meet'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$raw = wp_unslash( (string) $_GET['meet'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$url = esc_url_raw( $raw );
-			if ( $url && self::is_allowed_meet_url( $url ) ) {
-				return $url;
-			}
-		}
-
-		$stored = (string) get_theme_mod( 'xciv_online_event_meet_url', '' );
-		if ( $stored && self::is_allowed_meet_url( $stored ) ) {
-			return $stored;
-		}
-
-		return 'https://meet.google.com/lookup/xciv-salon-demo';
+		$event = self::event();
+		return (string) $event['meet_url'];
 	}
 
 	public static function is_allowed_meet_url( string $url ): bool {
@@ -218,5 +261,62 @@ final class OnlineEventFunnel {
 		$ok   = array( 'meet.google.com', 'www.meet.google.com' );
 
 		return in_array( $host, $ok, true );
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	private static function core_settings(): array {
+		if ( class_exists( '\\XCIV\\Core\\Admin\\SettingsStore' ) ) {
+			return \XCIV\Core\Admin\SettingsStore::all();
+		}
+
+		$stored = get_option( 'xciv_social_settings', array() );
+		return is_array( $stored ) ? $stored : array();
+	}
+
+	private static function meet_url_from( string $stored_setting ): string {
+		if ( isset( $_GET['meet'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$raw = wp_unslash( (string) $_GET['meet'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$url = esc_url_raw( $raw );
+			if ( $url && self::is_allowed_meet_url( $url ) ) {
+				return $url;
+			}
+		}
+
+		if ( $stored_setting && self::is_allowed_meet_url( $stored_setting ) ) {
+			return $stored_setting;
+		}
+
+		$theme_mod = (string) get_theme_mod( 'xciv_online_event_meet_url', '' );
+		if ( $theme_mod && self::is_allowed_meet_url( $theme_mod ) ) {
+			return $theme_mod;
+		}
+
+		return 'https://meet.google.com/lookup/xciv-salon-demo';
+	}
+
+	/**
+	 * @param array<int|string, mixed> $rows Raw rows.
+	 * @return list<array<string, mixed>>
+	 */
+	private static function normalize_priced_rows( array $rows, bool $with_popular ): array {
+		$out = array();
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+			$item = array(
+				'id'    => (string) ( $row['id'] ?? '' ),
+				'name'  => (string) ( $row['name'] ?? '' ),
+				'price' => (float) ( $row['price'] ?? 0 ),
+				'desc'  => (string) ( $row['desc'] ?? '' ),
+			);
+			if ( $with_popular ) {
+				$item['popular'] = ! empty( $row['popular'] );
+			}
+			$out[] = $item;
+		}
+		return $out;
 	}
 }

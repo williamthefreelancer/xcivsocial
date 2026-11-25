@@ -20,20 +20,10 @@ final class AdmissionsPage {
 	}
 
 	public static function menu(): void {
-		add_menu_page(
-			'XCIV Social',
-			'XCIV Social',
-			'manage_options',
-			'xciv-social',
-			array( self::class, 'render' ),
-			'dashicons-groups',
-			26
-		);
-
 		add_submenu_page(
 			'xciv-social',
-			'Admissions',
-			'Admissions',
+			__( 'Admissions', 'xciv-social-core' ),
+			__( 'Admissions', 'xciv-social-core' ),
 			'manage_options',
 			'xciv-social-admissions',
 			array( self::class, 'render' )

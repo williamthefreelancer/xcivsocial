@@ -7,6 +7,7 @@
 
 use XCIV\Theme\Support\AttendeeChats;
 use XCIV\Theme\Support\EventsCatalog;
+use XCIV\Theme\Support\OnlineEventFunnel;
 use XCIV\Theme\Support\VideoEmbed;
 
 get_template_part( 'template-parts/member/require', 'member' );
@@ -54,23 +55,19 @@ $attendee_chats  = AttendeeChats::threads();
 	<div class="xciv-dashboard__layout">
 		<div class="xciv-dashboard__primary">
 			<section class="xciv-panel xciv-dashboard__feature" data-panel="feature">
+				<?php
+				$briefing       = OnlineEventFunnel::briefing();
+				$briefing_url   = (string) apply_filters( 'xciv_dashboard_briefing_embed', $briefing['url'] );
+				$briefing_embed = VideoEmbed::resolve( $briefing_url );
+				$has_embed      = is_array( $briefing_embed );
+				?>
 				<header class="xciv-panel__head">
 					<p class="xciv-dashboard__eyebrow xciv-muted"><?php esc_html_e( 'Featured briefing', 'xciv-social' ); ?></p>
-					<h2 class="xciv-panel__title"><?php esc_html_e( 'How warm intros compound inside a closed room', 'xciv-social' ); ?></h2>
-					<p class="xciv-panel__desc"><?php esc_html_e( 'A short member briefing on cadence, reciprocity, and what to bring to the next gathering.', 'xciv-social' ); ?></p>
+					<h2 class="xciv-panel__title"><?php echo esc_html( $briefing['title'] ); ?></h2>
+					<p class="xciv-panel__desc"><?php echo esc_html( $briefing['desc'] ); ?></p>
 				</header>
 
 				<div class="xciv-panel__body">
-					<?php
-					/*
-					 * Paste a YouTube, Vimeo, or Bunny Stream URL (watch / share / embed).
-					 * Bunny example: https://iframe.mediadelivery.net/embed/{libraryId}/{videoId}
-					 */
-					$briefing_url   = '';
-					$briefing_url   = (string) apply_filters( 'xciv_dashboard_briefing_embed', $briefing_url );
-					$briefing_embed = VideoEmbed::resolve( $briefing_url );
-					$has_embed      = is_array( $briefing_embed );
-					?>
 					<figure
 						class="xciv-video"
 						data-xciv-video
