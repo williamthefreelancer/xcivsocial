@@ -85,13 +85,28 @@ final class Assets {
 		);
 
 		if ( wp_script_is( 'xciv-events', 'enqueued' ) ) {
-			$next = EventsCatalog::next_occurrence();
+			$next        = EventsCatalog::next_occurrence();
+			$current     = wp_get_current_user();
+			$full_name   = '';
+			$user_email  = '';
+			if ( $current instanceof \WP_User && $current->exists() ) {
+				$full_name = trim( $current->first_name . ' ' . $current->last_name );
+				if ( '' === $full_name ) {
+					$full_name = (string) $current->display_name;
+				}
+				$user_email = (string) $current->user_email;
+			}
+
 			wp_localize_script(
 				'xciv-events',
 				'xcivEvents',
 				array(
 					'calendar'    => EventsCatalog::calendar_events( 16 ),
 					'initialDate' => $next ? (string) $next['start'] : '',
+					'waitlistUrl' => esc_url_raw( rest_url( 'xciv/v1/waitlist' ) ),
+					'restNonce'   => wp_create_nonce( 'wp_rest' ),
+					'fullName'    => $full_name,
+					'email'       => $user_email,
 				)
 			);
 		}

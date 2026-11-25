@@ -71,6 +71,8 @@ $day_title = $next
 			</div>
 		</section>
 	</div>
+
+	<?php get_template_part( 'template-parts/ui/waitlist', 'modal' ); ?>
 </main>
 <?php
 get_footer();

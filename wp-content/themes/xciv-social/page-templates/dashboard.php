@@ -5,6 +5,7 @@
  * @package XCIV_Social
  */
 
+use XCIV\Theme\Support\AttendeeChats;
 use XCIV\Theme\Support\EventsCatalog;
 
 get_template_part( 'template-parts/member/require', 'member' );
@@ -24,9 +25,10 @@ $weekday_labels = array(
 	__( 'S', 'xciv-social' ),
 );
 
-$upcoming_trips = EventsCatalog::occurrences( 4 );
-$mini_cal       = EventsCatalog::dashboard_calendar();
-$calendar_days  = $mini_cal['days'];
+$upcoming_trips  = EventsCatalog::occurrences( 4 );
+$mini_cal        = EventsCatalog::dashboard_calendar();
+$calendar_days   = $mini_cal['days'];
+$attendee_chats  = AttendeeChats::threads();
 ?>
 <main id="main" class="xciv-shell xciv-dashboard" data-xciv-dashboard>
 	<header class="xciv-section-head xciv-section-head--split">
@@ -238,36 +240,27 @@ $calendar_days  = $mini_cal['days'];
 			<section class="xciv-panel xciv-dashboard__messages" data-panel="messages">
 				<header class="xciv-panel__head xciv-dashboard__panel-head">
 					<div>
-						<h2 class="xciv-panel__title"><?php esc_html_e( 'Messages', 'xciv-social' ); ?></h2>
-						<p class="xciv-panel__desc"><?php esc_html_e( 'Unread and pinned threads.', 'xciv-social' ); ?></p>
+						<h2 class="xciv-panel__title"><?php esc_html_e( 'Attendee chats', 'xciv-social' ); ?></h2>
+						<p class="xciv-panel__desc"><?php esc_html_e( 'Radically honest updates for people coming.', 'xciv-social' ); ?></p>
 					</div>
 					<a class="xciv-btn xciv-btn--ghost" href="<?php echo esc_url( home_url( '/messages/' ) ); ?>"><?php esc_html_e( 'Inbox', 'xciv-social' ); ?></a>
 				</header>
 				<div class="xciv-panel__body">
 					<ul class="xciv-dashboard-threads">
-						<li>
-							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>M</span></span>
-							<span class="xciv-dashboard-threads__copy">
-								<strong><?php esc_html_e( 'Maya Okonkwo', 'xciv-social' ); ?></strong>
-								<small class="xciv-muted"><?php esc_html_e( 'Can you make that Lagos intro next week?', 'xciv-social' ); ?></small>
-							</span>
-							<span class="xciv-dashboard-threads__badge"><?php esc_html_e( '2', 'xciv-social' ); ?></span>
-						</li>
-						<li>
-							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>S</span></span>
-							<span class="xciv-dashboard-threads__copy">
-								<strong><?php esc_html_e( 'Super Ninety Four Events', 'xciv-social' ); ?></strong>
-								<small class="xciv-muted"><?php esc_html_e( 'Harrisburg to Lynn purchases are open.', 'xciv-social' ); ?></small>
-							</span>
-						</li>
-						<li>
-							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>A</span></span>
-							<span class="xciv-dashboard-threads__copy">
-								<strong><?php esc_html_e( 'Amira Haddad', 'xciv-social' ); ?></strong>
-								<small class="xciv-muted"><?php esc_html_e( 'Sharing the GCC logistics shortlist.', 'xciv-social' ); ?></small>
-							</span>
-							<span class="xciv-dashboard-threads__badge"><?php esc_html_e( '1', 'xciv-social' ); ?></span>
-						</li>
+						<?php foreach ( $attendee_chats as $chat ) : ?>
+							<li>
+								<a class="xciv-dashboard-threads__link" href="<?php echo esc_url( home_url( '/messages/?chat=' . rawurlencode( (string) $chat['id'] ) ) ); ?>">
+									<span class="xciv-avatar xciv-avatar--sm xciv-avatar--group" aria-hidden="true"><span><?php echo esc_html( (string) $chat['initial'] ); ?></span></span>
+									<span class="xciv-dashboard-threads__copy">
+										<strong><?php echo esc_html( (string) $chat['name'] ); ?></strong>
+										<small class="xciv-muted"><?php echo esc_html( (string) $chat['preview'] ); ?></small>
+									</span>
+									<?php if ( ! empty( $chat['unread'] ) ) : ?>
+										<span class="xciv-dashboard-threads__badge"><?php echo esc_html( (string) (int) $chat['unread'] ); ?></span>
+									<?php endif; ?>
+								</a>
+							</li>
+						<?php endforeach; ?>
 					</ul>
 				</div>
 			</section>

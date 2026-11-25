@@ -1292,21 +1292,29 @@ a.xciv-avatar {
 }
 
 .xciv-dashboard-threads li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 0.75rem;
-  align-items: center;
-  padding: 0.75rem 0;
   border-bottom: 1px solid var(--xciv-line);
 }
 
-.xciv-dashboard-threads li:first-child {
+.xciv-dashboard-threads li:first-child .xciv-dashboard-threads__link {
   padding-top: 0;
 }
 
 .xciv-dashboard-threads li:last-child {
   border-bottom: 0;
+}
+
+.xciv-dashboard-threads li:last-child .xciv-dashboard-threads__link {
   padding-bottom: 0;
+}
+
+.xciv-dashboard-threads__link {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 .xciv-dashboard-threads__copy {
@@ -1432,7 +1440,8 @@ a.xciv-avatar {
   vertical-align: middle;
 }
 
-.xciv-btn.is-purchased {
+.xciv-btn.is-purchased,
+.xciv-btn.is-waitlisted {
   background: rgba(196, 163, 90, 0.16);
   color: var(--xciv-accent);
   border-color: rgba(196, 163, 90, 0.45);
@@ -1442,6 +1451,58 @@ a.xciv-avatar {
   margin: 0;
   color: var(--xciv-muted);
   line-height: 1.5;
+}
+
+.xciv-event-card__waitlist-note {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.xciv-waitlist-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid rgba(196, 163, 90, 0.35);
+  background: transparent;
+  color: inherit;
+}
+
+.xciv-waitlist-dialog::backdrop {
+  background: rgba(8, 10, 12, 0.72);
+}
+
+.xciv-waitlist-dialog__panel {
+  margin: 0;
+  padding: 1.25rem;
+  background: rgba(21, 26, 31, 0.96);
+}
+
+.xciv-waitlist-dialog__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.xciv-waitlist-dialog__head h2 {
+  margin: 0.15rem 0 0.35rem;
+  font-family: var(--xciv-font-display);
+  font-size: 1.45rem;
+}
+
+.xciv-waitlist-dialog__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--xciv-accent);
+}
+
+.xciv-waitlist-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
 }
 
 .xciv-event-card__people {
@@ -1590,6 +1651,12 @@ a.xciv-avatar {
 
 .xciv-day-event p {
   margin: 0;
+}
+
+.xciv-day-event__actions {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: stretch;
 }
 
 /* —— Profile —— */
@@ -1912,8 +1979,46 @@ a.xciv-avatar {
 }
 
 .xciv-dm__box {
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   border-left: 1px solid var(--xciv-line);
+}
+
+.xciv-dm__section-label {
+  margin: 0;
+  padding: 0.15rem 1.1rem 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--xciv-muted);
+}
+
+.xciv-dm__pin {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(196, 163, 90, 0.28);
+  background: rgba(196, 163, 90, 0.08);
+  font-size: 0.88rem;
+}
+
+.xciv-dm__pin strong {
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--xciv-accent);
+}
+
+.xciv-avatar--group {
+  border-color: rgba(196, 163, 90, 0.45);
+  background: rgba(196, 163, 90, 0.12);
+}
+
+.xciv-bubble__from {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--xciv-accent);
 }
 
 .xciv-dm__inbox-head,

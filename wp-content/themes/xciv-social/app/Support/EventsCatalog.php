@@ -36,6 +36,7 @@ final class EventsCatalog {
 				'host_short'      => __( 'Super Ninety Four Events', 'xciv-social' ),
 				'time_label'      => __( 'All day', 'xciv-social' ),
 				'mark_label'      => __( 'Harrisburg→Lynn', 'xciv-social' ),
+				'presale_waitlist' => true,
 			),
 			array(
 				'id'              => 'township-backways-route',
@@ -56,6 +57,7 @@ final class EventsCatalog {
 				'host_short'      => __( 'Super Ninety Four Events', 'xciv-social' ),
 				'time_label'      => __( 'Evening', 'xciv-social' ),
 				'mark_label'      => __( 'Backways', 'xciv-social' ),
+				'presale_waitlist' => true,
 			),
 		);
 	}
@@ -120,8 +122,9 @@ final class EventsCatalog {
 				continue;
 			}
 
-			$paid = ! empty( $trip['paid'] );
-			$host = $paid
+			$paid     = ! empty( $trip['paid'] );
+			$waitlist = ! empty( $trip['presale_waitlist'] );
+			$host     = $paid
 				? sprintf(
 					/* translators: 1: host name, 2: route label */
 					__( '%1$s · Paid · %2$s', 'xciv-social' ),
@@ -139,13 +142,16 @@ final class EventsCatalog {
 				$key           = $day->format( 'Y-m-d' );
 				$map[ $key ]  = $map[ $key ] ?? array();
 				$map[ $key ][] = array(
-					'time'  => (string) $trip['time_label'],
-					'city'  => (string) $trip['city'],
-					'title' => (string) $trip['title'],
-					'host'  => $host,
-					'going' => false,
-					'paid'  => $paid,
-					'mark'  => (string) $trip['mark_label'],
+					'time'            => (string) $trip['time_label'],
+					'city'            => (string) $trip['city'],
+					'title'           => (string) $trip['title'],
+					'host'            => $host,
+					'going'           => false,
+					'paid'            => $paid,
+					'presaleWaitlist' => $waitlist,
+					'seriesId'        => (string) $trip['series_id'],
+					'occurrenceId'    => (string) $trip['id'],
+					'mark'            => (string) $trip['mark_label'],
 				);
 			}
 		}
@@ -235,9 +241,10 @@ final class EventsCatalog {
 	 * @return array<string, mixed>
 	 */
 	private static function format_occurrence( array $series, \DateTimeImmutable $start, \DateTimeImmutable $end, int $index ): array {
-		$paid  = ! empty( $series['paid'] );
-		$same  = $start->format( 'Y-m-d' ) === $end->format( 'Y-m-d' );
-		$range = $same
+		$paid     = ! empty( $series['paid'] );
+		$waitlist = ! empty( $series['presale_waitlist'] );
+		$same     = $start->format( 'Y-m-d' ) === $end->format( 'Y-m-d' );
+		$range    = $same
 			? $start->format( 'M j, Y' )
 			: sprintf(
 				/* translators: 1: start date, 2: end date */
@@ -247,28 +254,32 @@ final class EventsCatalog {
 			);
 
 		$status = $paid ? __( 'Paid', 'xciv-social' ) : __( 'Private', 'xciv-social' );
+		if ( $waitlist ) {
+			$status = __( 'Pre-sale', 'xciv-social' );
+		}
 
 		return array(
-			'id'          => (string) $series['id'] . '-' . $start->format( 'Ymd' ),
-			'series_id'   => (string) $series['id'],
-			'title'       => (string) $series['title'],
-			'description' => (string) $series['description'],
-			'city'        => (string) $series['city'],
-			'destination' => (string) $series['destination'],
-			'route'       => (string) $series['route'],
-			'vertical'    => (string) $series['vertical'],
-			'paid'        => $paid,
-			'host'        => (string) $series['host'],
-			'host_short'  => (string) $series['host_short'],
-			'time_label'  => (string) $series['time_label'],
-			'mark_label'  => (string) $series['mark_label'],
-			'start'       => $start->format( 'Y-m-d' ),
-			'end'         => $end->format( 'Y-m-d' ),
-			'month'       => $start->format( 'M' ),
-			'day'         => $start->format( 'd' ),
-			'weekday'     => $start->format( 'D' ),
-			'range'       => $range,
-			'meta'        => sprintf(
+			'id'               => (string) $series['id'] . '-' . $start->format( 'Ymd' ),
+			'series_id'        => (string) $series['id'],
+			'title'            => (string) $series['title'],
+			'description'      => (string) $series['description'],
+			'city'             => (string) $series['city'],
+			'destination'      => (string) $series['destination'],
+			'route'            => (string) $series['route'],
+			'vertical'         => (string) $series['vertical'],
+			'paid'             => $paid,
+			'presale_waitlist' => $waitlist,
+			'host'             => (string) $series['host'],
+			'host_short'       => (string) $series['host_short'],
+			'time_label'       => (string) $series['time_label'],
+			'mark_label'       => (string) $series['mark_label'],
+			'start'            => $start->format( 'Y-m-d' ),
+			'end'              => $end->format( 'Y-m-d' ),
+			'month'            => $start->format( 'M' ),
+			'day'              => $start->format( 'd' ),
+			'weekday'          => $start->format( 'D' ),
+			'range'            => $range,
+			'meta'             => sprintf(
 				/* translators: 1: day span, 2: date range, 3: route, 4: status */
 				__( '%1$s · %2$s · %3$s · %4$s', 'xciv-social' ),
 				(string) $series['day_span'],
@@ -276,10 +287,10 @@ final class EventsCatalog {
 				(string) $series['route'],
 				$status
 			),
-			'scope'       => 'upcoming',
-			'index'       => $index,
-			'badge'       => $status,
-			'cta'         => $paid ? 'purchase' : 'rsvp',
+			'scope'            => 'upcoming',
+			'index'            => $index,
+			'badge'            => $status,
+			'cta'              => $waitlist ? 'waitlist' : ( $paid ? 'purchase' : 'rsvp' ),
 		);
 	}
 

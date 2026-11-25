@@ -28,8 +28,13 @@
     if (!messages) return;
     var html = '<div class="xciv-dm__day"><span>Today</span></div>';
     (list || []).forEach(function (msg) {
+      var from =
+        !msg.mine && msg.from
+          ? '<span class="xciv-bubble__from">' + escapeHtml(msg.from) + '</span>'
+          : '';
       html +=
         '<article class="xciv-bubble ' + (msg.mine ? 'xciv-bubble--mine' : 'xciv-bubble--theirs') + '">' +
+          from +
           '<p>' + escapeHtml(msg.text || '') + '</p>' +
           '<small class="xciv-muted">' + escapeHtml(msg.time || '') + '</small>' +
         '</article>';
@@ -38,8 +43,9 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
-  function openThread(item) {
+  function openThread(item, opts) {
     if (!item) return;
+    opts = opts || {};
 
     threadList.querySelectorAll('.xciv-dm__thread').forEach(function (el) {
       el.classList.remove('is-active');
@@ -53,6 +59,7 @@
     var meta = item.getAttribute('data-thread-meta') || '';
     var online = item.getAttribute('data-thread-online') === '1';
     var initial = (name.charAt(0) || '?').toUpperCase();
+    var id = item.getAttribute('data-thread-id') || '';
 
     if (threadTitle) threadTitle.textContent = name;
     if (threadMeta) threadMeta.textContent = (online ? 'Active now · ' : '') + meta;
@@ -66,6 +73,14 @@
     }
 
     if (dm) dm.classList.add('is-chat-open');
+
+    if (id && window.history && window.history.replaceState) {
+      var url = new URL(window.location.href);
+      url.searchParams.set('chat', id);
+      if (!opts.skipHistory) {
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
   }
 
   if (threadList) {
@@ -116,6 +131,14 @@
       var time = active.querySelector('time');
       if (preview) preview.textContent = text;
       if (time) time.textContent = 'now';
+
+      try {
+        var stored = JSON.parse(active.getAttribute('data-thread-messages') || '[]');
+        stored.push({ mine: true, text: text, time: 'Just now' });
+        active.setAttribute('data-thread-messages', JSON.stringify(stored));
+      } catch (err) {
+        // ignore local persistence errors
+      }
     }
   }
 
@@ -138,8 +161,18 @@
     compose.addEventListener('click', function () {
       if (search) {
         search.focus();
-        search.placeholder = 'Search people to message…';
+        search.placeholder = 'Search attendee chats…';
       }
     });
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var chatId = params.get('chat');
+  if (chatId && threadList) {
+    var target = threadList.querySelector('[data-thread-id="' + chatId + '"]');
+    if (target) {
+      openThread(target, { skipHistory: true });
+      if (dm) dm.classList.add('is-chat-open');
+    }
   }
 })();

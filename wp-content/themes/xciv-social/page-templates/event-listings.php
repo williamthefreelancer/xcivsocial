@@ -66,13 +66,16 @@ $occurrences = EventsCatalog::occurrences( 12 );
 				? __( 'Nightlife', 'xciv-social' )
 				: __( 'Club & event', 'xciv-social' );
 			?>
+			<?php $is_waitlist = ! empty( $trip['presale_waitlist'] ); ?>
 			<article
 				class="xciv-event-card"
 				data-event-id="<?php echo esc_attr( (string) $trip['id'] ); ?>"
+				data-series-id="<?php echo esc_attr( (string) $trip['series_id'] ); ?>"
 				data-scope="<?php echo esc_attr( (string) $trip['scope'] ); ?>"
 				data-vertical="<?php echo esc_attr( (string) $trip['vertical'] ); ?>"
 				data-city="<?php echo esc_attr( (string) $trip['city'] ); ?>"
 				data-paid="<?php echo $is_paid ? 'true' : 'false'; ?>"
+				data-waitlist="<?php echo $is_waitlist ? 'true' : 'false'; ?>"
 			>
 				<div class="xciv-event-card__date" aria-hidden="true">
 					<span class="xciv-event-card__month"><?php echo esc_html( (string) $trip['month'] ); ?></span>
@@ -85,6 +88,9 @@ $occurrences = EventsCatalog::occurrences( 12 );
 						<span class="xciv-event-card__badge"><?php echo esc_html( (string) $trip['badge'] ); ?></span>
 					</h2>
 					<p class="xciv-event-card__desc"><?php echo esc_html( (string) $trip['description'] ); ?></p>
+					<?php if ( $is_waitlist ) : ?>
+						<p class="xciv-event-card__waitlist-note xciv-muted"><?php esc_html_e( 'Pre-sale waitlist open — get early access when tickets drop.', 'xciv-social' ); ?></p>
+					<?php endif; ?>
 					<div class="xciv-event-card__people">
 						<span class="xciv-avatar" aria-hidden="true"><span>S</span></span>
 						<span class="xciv-muted">
@@ -100,8 +106,21 @@ $occurrences = EventsCatalog::occurrences( 12 );
 					</div>
 				</div>
 				<div class="xciv-event-card__actions">
-					<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-					<?php if ( $is_paid ) : ?>
+					<a
+						class="xciv-btn xciv-btn--ghost"
+						href="<?php echo esc_url( home_url( '/messages/?chat=' . rawurlencode( (string) $trip['series_id'] ) ) ); ?>"
+					><?php esc_html_e( 'Attendees chat', 'xciv-social' ); ?></a>
+					<?php if ( $is_waitlist ) : ?>
+						<button
+							type="button"
+							class="xciv-btn xciv-btn--primary"
+							data-waitlist-join
+							data-series-id="<?php echo esc_attr( (string) $trip['series_id'] ); ?>"
+							data-occurrence-id="<?php echo esc_attr( (string) $trip['id'] ); ?>"
+							data-event-title="<?php echo esc_attr( (string) $trip['title'] ); ?>"
+							aria-pressed="false"
+						><?php esc_html_e( 'Join waitlist', 'xciv-social' ); ?></button>
+					<?php elseif ( $is_paid ) : ?>
 						<button type="button" class="xciv-btn xciv-btn--primary" data-purchase aria-pressed="false"><?php esc_html_e( 'Purchase', 'xciv-social' ); ?></button>
 					<?php else : ?>
 						<button type="button" class="xciv-btn xciv-btn--primary" data-rsvp aria-pressed="false"><?php esc_html_e( 'RSVP', 'xciv-social' ); ?></button>
@@ -114,6 +133,8 @@ $occurrences = EventsCatalog::occurrences( 12 );
 			<?php esc_html_e( 'No events in this view. Try another filter.', 'xciv-social' ); ?>
 		</p>
 	</section>
+
+	<?php get_template_part( 'template-parts/ui/waitlist', 'modal' ); ?>
 </main>
 <?php
 get_footer();

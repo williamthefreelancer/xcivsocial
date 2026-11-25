@@ -7,6 +7,159 @@
 
   var catalog = (window.xcivEvents && window.xcivEvents.calendar) || {};
   var initialDate = (window.xcivEvents && window.xcivEvents.initialDate) || '';
+  var waitlistCfg = window.xcivEvents || {};
+  var dialog = document.querySelector('[data-waitlist-dialog]');
+  var waitlistForm = document.querySelector('[data-waitlist-form]');
+  var activeWaitlistBtn = null;
+
+  function openWaitlist(opts) {
+    if (!dialog || !waitlistForm) return;
+    var titleEl = dialog.querySelector('[data-waitlist-title]');
+    var seriesInput = dialog.querySelector('[data-waitlist-series]');
+    var occurrenceInput = dialog.querySelector('[data-waitlist-occurrence]');
+    var nameInput = dialog.querySelector('[data-waitlist-name]');
+    var emailInput = dialog.querySelector('[data-waitlist-email]');
+    var statusEl = dialog.querySelector('[data-waitlist-status]');
+    var submitBtn = dialog.querySelector('[data-waitlist-submit]');
+
+    if (titleEl) titleEl.textContent = opts.title ? ('Join waitlist · ' + opts.title) : 'Join the waitlist';
+    if (seriesInput) seriesInput.value = opts.seriesId || '';
+    if (occurrenceInput) occurrenceInput.value = opts.occurrenceId || '';
+    if (nameInput && !nameInput.value && waitlistCfg.fullName) nameInput.value = waitlistCfg.fullName;
+    if (emailInput && !emailInput.value && waitlistCfg.email) emailInput.value = waitlistCfg.email;
+    if (statusEl) {
+      statusEl.hidden = true;
+      statusEl.textContent = '';
+    }
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join waitlist';
+    }
+
+    activeWaitlistBtn = opts.button || null;
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute('open', '');
+    }
+  }
+
+  function closeWaitlist() {
+    if (!dialog) return;
+    if (typeof dialog.close === 'function') {
+      dialog.close();
+    } else {
+      dialog.removeAttribute('open');
+    }
+    activeWaitlistBtn = null;
+  }
+
+  function markJoined(btn) {
+    if (!btn) return;
+    btn.classList.add('is-waitlisted');
+    btn.setAttribute('aria-pressed', 'true');
+    btn.textContent = 'On waitlist';
+  }
+
+  function handleWaitlistClick(event) {
+    var join = event.target.closest('[data-waitlist-join]');
+    if (!join) return;
+    event.preventDefault();
+    if (join.classList.contains('is-waitlisted')) return;
+    openWaitlist({
+      seriesId: join.getAttribute('data-series-id') || '',
+      occurrenceId: join.getAttribute('data-occurrence-id') || '',
+      title: join.getAttribute('data-event-title') || '',
+      button: join
+    });
+  }
+
+  if (dialog) {
+    dialog.querySelectorAll('[data-waitlist-close]').forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        closeWaitlist();
+      });
+    });
+
+    dialog.addEventListener('click', function (event) {
+      if (event.target === dialog) closeWaitlist();
+    });
+  }
+
+  if (waitlistForm) {
+    waitlistForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var seriesId = (waitlistForm.querySelector('[data-waitlist-series]') || {}).value || '';
+      var occurrenceId = (waitlistForm.querySelector('[data-waitlist-occurrence]') || {}).value || '';
+      var fullName = ((waitlistForm.querySelector('[data-waitlist-name]') || {}).value || '').trim();
+      var email = ((waitlistForm.querySelector('[data-waitlist-email]') || {}).value || '').trim();
+      var statusEl = waitlistForm.querySelector('[data-waitlist-status]');
+      var submitBtn = waitlistForm.querySelector('[data-waitlist-submit]');
+      var url = waitlistCfg.waitlistUrl || '';
+
+      if (!seriesId || !fullName || !email || !url) {
+        if (statusEl) {
+          statusEl.hidden = false;
+          statusEl.textContent = 'Missing waitlist details. Refresh and try again.';
+        }
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Joining…';
+      }
+      if (statusEl) {
+        statusEl.hidden = false;
+        statusEl.textContent = 'Saving your spot…';
+      }
+
+      fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': waitlistCfg.restNonce || ''
+        },
+        body: JSON.stringify({
+          series_id: seriesId,
+          occurrence_id: occurrenceId,
+          full_name: fullName,
+          email: email,
+          source: list ? 'event-listings' : 'event-calendar'
+        })
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, status: res.status, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) {
+            var msg =
+              (result.data && (result.data.message || (result.data.data && result.data.data.message))) ||
+              'Could not join the waitlist.';
+            throw new Error(msg);
+          }
+          if (statusEl) {
+            statusEl.textContent = (result.data && result.data.message) || 'You are on the waitlist.';
+          }
+          markJoined(activeWaitlistBtn);
+          window.setTimeout(closeWaitlist, 900);
+        })
+        .catch(function (err) {
+          if (statusEl) {
+            statusEl.hidden = false;
+            statusEl.textContent = err.message || 'Could not join the waitlist.';
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Join waitlist';
+          }
+        });
+    });
+  }
 
   if (list) {
     var scope = 'upcoming';
@@ -59,6 +212,11 @@
     }
 
     eventList.addEventListener('click', function (event) {
+      if (event.target.closest('[data-waitlist-join]')) {
+        handleWaitlistClick(event);
+        return;
+      }
+
       var purchase = event.target.closest('[data-purchase]');
       if (purchase) {
         var on = !purchase.classList.contains('is-purchased');
@@ -95,6 +253,14 @@
       return year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
     }
 
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
     function renderDayEvents(key, pretty) {
       if (dayTitle) dayTitle.textContent = pretty;
       if (!detail) return;
@@ -104,16 +270,31 @@
         return;
       }
       detail.innerHTML = items.map(function (item) {
-        var cta = item.paid
-          ? '<button type="button" class="xciv-btn xciv-btn--primary" data-purchase>Purchase</button>'
-          : '<button type="button" class="xciv-btn xciv-btn--primary' + (item.going ? ' is-rsvped' : '') + '" data-rsvp>' +
-              (item.going ? 'Going' : 'RSVP') +
+        var badge = item.presaleWaitlist ? 'Pre-sale' : (item.paid ? 'Paid' : 'Private');
+        var chatHref = '/messages/?chat=' + encodeURIComponent(item.seriesId || '');
+        var chat =
+          '<a class="xciv-btn xciv-btn--ghost" href="' + chatHref + '">Attendees chat</a>';
+        var cta;
+        if (item.presaleWaitlist) {
+          cta =
+            '<button type="button" class="xciv-btn xciv-btn--primary" data-waitlist-join' +
+            ' data-series-id="' + escapeHtml(item.seriesId || '') + '"' +
+            ' data-occurrence-id="' + escapeHtml(item.occurrenceId || '') + '"' +
+            ' data-event-title="' + escapeHtml(item.title || '') + '"' +
+            '>Join waitlist</button>';
+        } else if (item.paid) {
+          cta = '<button type="button" class="xciv-btn xciv-btn--primary" data-purchase>Purchase</button>';
+        } else {
+          cta =
+            '<button type="button" class="xciv-btn xciv-btn--primary' + (item.going ? ' is-rsvped' : '') + '" data-rsvp>' +
+            (item.going ? 'Going' : 'RSVP') +
             '</button>';
+        }
         return (
           '<article class="xciv-day-event">' +
-            '<div class="xciv-day-event__time"><strong>' + item.time + '</strong><span class="xciv-muted">' + item.city + '</span></div>' +
-            '<div><h3>' + item.title + ' <span class="xciv-event-card__badge">' + (item.paid ? 'Paid' : 'Private') + '</span></h3><p class="xciv-muted">' + item.host + '</p></div>' +
-            cta +
+            '<div class="xciv-day-event__time"><strong>' + escapeHtml(item.time) + '</strong><span class="xciv-muted">' + escapeHtml(item.city) + '</span></div>' +
+            '<div><h3>' + escapeHtml(item.title) + ' <span class="xciv-event-card__badge">' + badge + '</span></h3><p class="xciv-muted">' + escapeHtml(item.host) + '</p></div>' +
+            '<div class="xciv-day-event__actions">' + chat + cta + '</div>' +
           '</article>'
         );
       }).join('');
@@ -175,8 +356,8 @@
             '<span class="xciv-calendar__marks">' +
               marks.map(function (m) {
                 var mark = m.mark || (m.title ? m.title.split(':')[0] : '');
-                return '<span class="xciv-calendar__dot" title="' + m.title + '"></span>' +
-                  '<span class="xciv-calendar__mark-label">' + mark + '</span>';
+                return '<span class="xciv-calendar__dot" title="' + escapeHtml(m.title) + '"></span>' +
+                  '<span class="xciv-calendar__mark-label">' + escapeHtml(mark) + '</span>';
               }).join('') +
             '</span>' +
           '</button>';
@@ -223,6 +404,11 @@
     }
 
     calendar.addEventListener('click', function (event) {
+      if (event.target.closest('[data-waitlist-join]')) {
+        handleWaitlistClick(event);
+        return;
+      }
+
       var purchase = event.target.closest('[data-purchase]');
       if (purchase) {
         var on = !purchase.classList.contains('is-purchased');
