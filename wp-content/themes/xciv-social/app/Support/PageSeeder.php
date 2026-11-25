@@ -116,6 +116,21 @@ final class PageSeeder {
 				'slug'     => 'request-admission',
 				'template' => 'page-templates/admission.php',
 			),
+			array(
+				'title'    => 'Event Sales',
+				'slug'     => 'event-sales',
+				'template' => 'page-templates/event-sales.php',
+			),
+			array(
+				'title'    => 'Event Thank You',
+				'slug'     => 'event-thank-you',
+				'template' => 'page-templates/event-thank-you.php',
+			),
+			array(
+				'title'    => 'Event Broadcast',
+				'slug'     => 'event-broadcast',
+				'template' => 'page-templates/event-broadcast.php',
+			),
 		);
 	}
 

@@ -137,6 +137,16 @@ final class Assets {
 			'xciv-directory',
 			'directory.js'
 		);
+
+		self::enqueue_template_script(
+			array(
+				'page-templates/event-sales.php',
+				'page-templates/event-thank-you.php',
+				'page-templates/event-broadcast.php',
+			),
+			'xciv-event-funnel',
+			'event-funnel.js'
+		);
 	}
 
 	/**
