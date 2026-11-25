@@ -5,17 +5,8 @@
   var list = document.querySelector('[data-xciv-events-list]');
   if (!calendar && !list) return;
 
-  var demoEvents = {
-    '2026-12-04': [
-      { time: '7:30 PM', city: 'Miami', title: 'Table Dinner: One Intro Before Dessert', host: 'Jonah Reyes · 18 going', going: true }
-    ],
-    '2026-12-11': [
-      { time: '10:00 PM', city: 'Dubai', title: 'Members After Hours — DIFC Terrace', host: 'Amira Haddad · 42 going', going: false }
-    ],
-    '2026-12-16': [
-      { time: '4:00 PM', city: 'Lagos', title: 'Corridor Operators Roundtable', host: 'Maya Okonkwo · 11 going', going: true }
-    ]
-  };
+  var catalog = (window.xcivEvents && window.xcivEvents.calendar) || {};
+  var initialDate = (window.xcivEvents && window.xcivEvents.initialDate) || '';
 
   if (list) {
     var scope = 'upcoming';
@@ -68,13 +59,22 @@
     }
 
     eventList.addEventListener('click', function (event) {
+      var purchase = event.target.closest('[data-purchase]');
+      if (purchase) {
+        var on = !purchase.classList.contains('is-purchased');
+        purchase.classList.toggle('is-purchased', on);
+        purchase.setAttribute('aria-pressed', on ? 'true' : 'false');
+        purchase.textContent = on ? 'Purchased' : 'Purchase';
+        return;
+      }
+
       var rsvp = event.target.closest('[data-rsvp]');
       if (!rsvp || rsvp.disabled) return;
       if (rsvp.classList.contains('is-rsvped') && rsvp.textContent.trim() === 'Hosting') return;
-      var on = !rsvp.classList.contains('is-rsvped');
-      rsvp.classList.toggle('is-rsvped', on);
-      rsvp.setAttribute('aria-pressed', on ? 'true' : 'false');
-      rsvp.textContent = on ? 'Going' : 'RSVP';
+      var going = !rsvp.classList.contains('is-rsvped');
+      rsvp.classList.toggle('is-rsvped', going);
+      rsvp.setAttribute('aria-pressed', going ? 'true' : 'false');
+      rsvp.textContent = going ? 'Going' : 'RSVP';
     });
 
     applyListFilters();
@@ -87,7 +87,9 @@
     var grid = calendar.querySelector('[data-cal-grid]');
     var detail = calendar.querySelector('[data-day-events]');
     var dayTitle = calendar.querySelector('[data-day-title]');
-    var cursor = new Date(2026, 11, 1);
+    var seed = initialDate ? new Date(initialDate + 'T12:00:00') : new Date();
+    var cursor = new Date(seed.getFullYear(), seed.getMonth(), 1);
+    var todayKey = iso(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
     function iso(year, month, day) {
       return year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
@@ -96,19 +98,22 @@
     function renderDayEvents(key, pretty) {
       if (dayTitle) dayTitle.textContent = pretty;
       if (!detail) return;
-      var items = demoEvents[key] || [];
+      var items = catalog[key] || [];
       if (!items.length) {
         detail.innerHTML = '<p class="xciv-muted">No events on this day.</p>';
         return;
       }
       detail.innerHTML = items.map(function (item) {
+        var cta = item.paid
+          ? '<button type="button" class="xciv-btn xciv-btn--primary" data-purchase>Purchase</button>'
+          : '<button type="button" class="xciv-btn xciv-btn--primary' + (item.going ? ' is-rsvped' : '') + '" data-rsvp>' +
+              (item.going ? 'Going' : 'RSVP') +
+            '</button>';
         return (
           '<article class="xciv-day-event">' +
             '<div class="xciv-day-event__time"><strong>' + item.time + '</strong><span class="xciv-muted">' + item.city + '</span></div>' +
-            '<div><h3>' + item.title + '</h3><p class="xciv-muted">' + item.host + '</p></div>' +
-            '<button type="button" class="xciv-btn xciv-btn--primary' + (item.going ? ' is-rsvped' : '') + '" data-rsvp>' +
-              (item.going ? 'Going' : 'RSVP') +
-            '</button>' +
+            '<div><h3>' + item.title + (item.paid ? ' <span class="xciv-event-card__badge">Paid</span>' : '') + '</h3><p class="xciv-muted">' + item.host + '</p></div>' +
+            cta +
           '</article>'
         );
       }).join('');
@@ -126,6 +131,7 @@
       var prevDays = new Date(year, month, 0).getDate();
       var html = '';
       var cells = 42;
+      var selectedKey = initialDate && catalog[initialDate] ? initialDate : '';
 
       for (var i = 0; i < cells; i++) {
         var dayNum;
@@ -154,25 +160,40 @@
         }
 
         var key = iso(cellYear, cellMonth, dayNum);
-        var marks = demoEvents[key] || [];
-        var todayKey = iso(2026, 11, 4);
+        var marks = catalog[key] || [];
+        if (!selectedKey && marks.length && key >= todayKey) {
+          selectedKey = key;
+        }
+
         html +=
           '<button type="button" class="xciv-calendar__cell' +
             (outside ? ' is-outside' : '') +
-            (key === todayKey ? ' is-today is-selected' : '') +
+            (key === todayKey ? ' is-today' : '') +
+            (key === selectedKey ? ' is-selected' : '') +
           '" data-date="' + key + '" data-label="' + key + '">' +
             '<span class="xciv-calendar__day">' + dayNum + '</span>' +
             '<span class="xciv-calendar__marks">' +
               marks.map(function (m) {
+                var mark = m.mark || (m.title ? m.title.split(':')[0] : '');
                 return '<span class="xciv-calendar__dot" title="' + m.title + '"></span>' +
-                  '<span class="xciv-calendar__mark-label">' + m.title.split(':')[0] + '</span>';
+                  '<span class="xciv-calendar__mark-label">' + mark + '</span>';
               }).join('') +
             '</span>' +
           '</button>';
       }
 
       grid.innerHTML = html;
-      renderDayEvents('2026-12-04', 'Thursday, Dec 4');
+
+      if (selectedKey) {
+        var pretty = new Date(selectedKey + 'T12:00:00').toLocaleDateString('en-US', {
+          weekday: 'long',
+          month: 'short',
+          day: 'numeric'
+        });
+        renderDayEvents(selectedKey, pretty);
+      } else {
+        renderDayEvents('', 'Select a day');
+      }
     }
 
     grid.addEventListener('click', function (event) {
@@ -202,11 +223,19 @@
     }
 
     calendar.addEventListener('click', function (event) {
+      var purchase = event.target.closest('[data-purchase]');
+      if (purchase) {
+        var on = !purchase.classList.contains('is-purchased');
+        purchase.classList.toggle('is-purchased', on);
+        purchase.textContent = on ? 'Purchased' : 'Purchase';
+        return;
+      }
+
       var rsvp = event.target.closest('[data-rsvp]');
       if (!rsvp) return;
-      var on = !rsvp.classList.contains('is-rsvped');
-      rsvp.classList.toggle('is-rsvped', on);
-      rsvp.textContent = on ? 'Going' : 'RSVP';
+      var going = !rsvp.classList.contains('is-rsvped');
+      rsvp.classList.toggle('is-rsvped', going);
+      rsvp.textContent = going ? 'Going' : 'RSVP';
     });
 
     renderMonth();

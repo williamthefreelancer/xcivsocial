@@ -5,14 +5,18 @@
  * @package XCIV_Social
  */
 
+use XCIV\Theme\Support\EventsCatalog;
+
 get_template_part( 'template-parts/member/require', 'member' );
 get_header();
+
+$occurrences = EventsCatalog::occurrences( 6 );
 ?>
 <main id="main" class="xciv-shell xciv-events xciv-events--list" data-xciv-events-list>
 	<header class="xciv-section-head xciv-section-head--split">
 		<div>
 			<h1><?php esc_html_e( 'Events', 'xciv-social' ); ?></h1>
-			<p><?php esc_html_e( 'Private dinners, club nights, and member-hosted experiences.', 'xciv-social' ); ?></p>
+			<p><?php esc_html_e( 'Paid member trips and Super Ninety Four Experiences.', 'xciv-social' ); ?></p>
 		</div>
 		<div class="xciv-section-head__actions">
 			<a class="xciv-btn xciv-btn--ghost" href="<?php echo esc_url( home_url( '/event-calendar/' ) ); ?>"><?php esc_html_e( 'Calendar', 'xciv-social' ); ?></a>
@@ -55,106 +59,49 @@ get_header();
 	</section>
 
 	<section class="xciv-event-list" data-event-list>
-		<article class="xciv-event-card" data-event-id="e1" data-scope="upcoming going" data-vertical="hospitality" data-city="Miami">
-			<div class="xciv-event-card__date" aria-hidden="true">
-				<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-				<span class="xciv-event-card__day">04</span>
-			</div>
-			<div class="xciv-event-card__body">
-				<p class="xciv-event-card__meta xciv-muted"><?php esc_html_e( 'Thu · 7:30 PM · Miami · 18 going', 'xciv-social' ); ?></p>
-				<h2 class="xciv-event-card__title"><?php esc_html_e( 'Table Dinner: One Intro Before Dessert', 'xciv-social' ); ?></h2>
-				<p class="xciv-event-card__desc"><?php esc_html_e( 'Twelve-seat dinner with a hard rule — every guest offers one warm introduction before dessert. Hosted by Jonah Reyes.', 'xciv-social' ); ?></p>
-				<div class="xciv-event-card__people">
-					<span class="xciv-avatar" aria-hidden="true"><span>J</span></span>
-					<span class="xciv-muted"><?php esc_html_e( 'Hosted by Jonah Reyes · Hospitality', 'xciv-social' ); ?></span>
+		<?php foreach ( $occurrences as $trip ) : ?>
+			<article
+				class="xciv-event-card"
+				data-event-id="<?php echo esc_attr( (string) $trip['id'] ); ?>"
+				data-scope="<?php echo esc_attr( (string) $trip['scope'] ); ?>"
+				data-vertical="<?php echo esc_attr( (string) $trip['vertical'] ); ?>"
+				data-city="<?php echo esc_attr( (string) $trip['city'] ); ?>"
+				data-paid="true"
+			>
+				<div class="xciv-event-card__date" aria-hidden="true">
+					<span class="xciv-event-card__month"><?php echo esc_html( (string) $trip['month'] ); ?></span>
+					<span class="xciv-event-card__day"><?php echo esc_html( (string) $trip['day'] ); ?></span>
 				</div>
-			</div>
-			<div class="xciv-event-card__actions">
-				<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-				<button type="button" class="xciv-btn xciv-btn--primary is-rsvped" data-rsvp aria-pressed="true"><?php esc_html_e( 'Going', 'xciv-social' ); ?></button>
-			</div>
-		</article>
-
-		<article class="xciv-event-card" data-event-id="e2" data-scope="upcoming" data-vertical="nightlife" data-city="Dubai">
-			<div class="xciv-event-card__date" aria-hidden="true">
-				<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-				<span class="xciv-event-card__day">11</span>
-			</div>
-			<div class="xciv-event-card__body">
-				<p class="xciv-event-card__meta xciv-muted"><?php esc_html_e( 'Thu · 10:00 PM · Dubai · 42 going', 'xciv-social' ); ?></p>
-				<h2 class="xciv-event-card__title"><?php esc_html_e( 'Members After Hours — DIFC Terrace', 'xciv-social' ); ?></h2>
-				<p class="xciv-event-card__desc"><?php esc_html_e( 'Closed terrace night for operators in media, nightlife, and hospitality. No pitches; conversation only.', 'xciv-social' ); ?></p>
-				<div class="xciv-event-card__people">
-					<span class="xciv-avatar" aria-hidden="true"><span>A</span></span>
-					<span class="xciv-muted"><?php esc_html_e( 'Hosted by Amira Haddad · Media', 'xciv-social' ); ?></span>
+				<div class="xciv-event-card__body">
+					<p class="xciv-event-card__meta xciv-muted"><?php echo esc_html( (string) $trip['meta'] ); ?></p>
+					<h2 class="xciv-event-card__title">
+						<?php echo esc_html( (string) $trip['title'] ); ?>
+						<span class="xciv-event-card__badge"><?php esc_html_e( 'Paid', 'xciv-social' ); ?></span>
+					</h2>
+					<p class="xciv-event-card__desc"><?php echo esc_html( (string) $trip['description'] ); ?></p>
+					<div class="xciv-event-card__people">
+						<span class="xciv-avatar" aria-hidden="true"><span>S</span></span>
+						<span class="xciv-muted">
+							<?php
+							printf(
+								/* translators: %s: host organization */
+								esc_html__( 'Hosted by %s · Club & event', 'xciv-social' ),
+								esc_html( (string) $trip['host_short'] )
+							);
+							?>
+						</span>
+					</div>
 				</div>
-			</div>
-			<div class="xciv-event-card__actions">
-				<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-				<button type="button" class="xciv-btn xciv-btn--primary" data-rsvp aria-pressed="false"><?php esc_html_e( 'RSVP', 'xciv-social' ); ?></button>
-			</div>
-		</article>
-
-		<article class="xciv-event-card" data-event-id="e3" data-scope="upcoming hosting" data-vertical="fintech" data-city="Lagos">
-			<div class="xciv-event-card__date" aria-hidden="true">
-				<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-				<span class="xciv-event-card__day">16</span>
-			</div>
-			<div class="xciv-event-card__body">
-				<p class="xciv-event-card__meta xciv-muted"><?php esc_html_e( 'Tue · 4:00 PM · Lagos · 11 going', 'xciv-social' ); ?></p>
-				<h2 class="xciv-event-card__title"><?php esc_html_e( 'Corridor Operators Roundtable', 'xciv-social' ); ?></h2>
-				<p class="xciv-event-card__desc"><?php esc_html_e( 'Working session for remittance and payments operators clearing volume across West Africa. Compliance-first agenda.', 'xciv-social' ); ?></p>
-				<div class="xciv-event-card__people">
-					<span class="xciv-avatar" aria-hidden="true"><span>M</span></span>
-					<span class="xciv-muted"><?php esc_html_e( 'Hosted by Maya Okonkwo · Fintech', 'xciv-social' ); ?></span>
+				<div class="xciv-event-card__actions">
+					<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
+					<button type="button" class="xciv-btn xciv-btn--primary" data-purchase aria-pressed="false"><?php esc_html_e( 'Purchase', 'xciv-social' ); ?></button>
 				</div>
-			</div>
-			<div class="xciv-event-card__actions">
-				<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-				<button type="button" class="xciv-btn xciv-btn--primary is-rsvped" data-rsvp aria-pressed="true"><?php esc_html_e( 'Hosting', 'xciv-social' ); ?></button>
-			</div>
-		</article>
+			</article>
+		<?php endforeach; ?>
 
-		<article class="xciv-event-card" data-event-id="e4" data-scope="upcoming" data-vertical="club_event" data-city="London">
-			<div class="xciv-event-card__date" aria-hidden="true">
-				<span class="xciv-event-card__month"><?php esc_html_e( 'Jan', 'xciv-social' ); ?></span>
-				<span class="xciv-event-card__day">09</span>
-			</div>
-			<div class="xciv-event-card__body">
-				<p class="xciv-event-card__meta xciv-muted"><?php esc_html_e( 'Fri · 6:00 PM · London · 27 going', 'xciv-social' ); ?></p>
-				<h2 class="xciv-event-card__title"><?php esc_html_e( 'New Year Operator Salon', 'xciv-social' ); ?></h2>
-				<p class="xciv-event-card__desc"><?php esc_html_e( 'Salons for club and event leads — staffing, talent, and capital conversations without the public circuit.', 'xciv-social' ); ?></p>
-				<div class="xciv-event-card__people">
-					<span class="xciv-avatar" aria-hidden="true"><span>S</span></span>
-					<span class="xciv-muted"><?php esc_html_e( 'Hosted by Sofia Berg · Design ops', 'xciv-social' ); ?></span>
-				</div>
-			</div>
-			<div class="xciv-event-card__actions">
-				<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-				<button type="button" class="xciv-btn xciv-btn--primary" data-rsvp aria-pressed="false"><?php esc_html_e( 'RSVP', 'xciv-social' ); ?></button>
-			</div>
-		</article>
-
-		<article class="xciv-event-card" data-event-id="e5" data-scope="past going" data-vertical="marketplace" data-city="Montréal" hidden>
-			<div class="xciv-event-card__date" aria-hidden="true">
-				<span class="xciv-event-card__month"><?php esc_html_e( 'Nov', 'xciv-social' ); ?></span>
-				<span class="xciv-event-card__day">12</span>
-			</div>
-			<div class="xciv-event-card__body">
-				<p class="xciv-event-card__meta xciv-muted"><?php esc_html_e( 'Wed · 5:00 PM · Montréal · Ended', 'xciv-social' ); ?></p>
-				<h2 class="xciv-event-card__title"><?php esc_html_e( 'Deal Memo Workshop', 'xciv-social' ); ?></h2>
-				<p class="xciv-event-card__desc"><?php esc_html_e( 'Drafted lightweight first-conversation memos for operator-to-operator capital inside XCIV.', 'xciv-social' ); ?></p>
-				<div class="xciv-event-card__people">
-					<span class="xciv-avatar" aria-hidden="true"><span>T</span></span>
-					<span class="xciv-muted"><?php esc_html_e( 'Hosted by Theo Marchand · Climate tech', 'xciv-social' ); ?></span>
-				</div>
-			</div>
-			<div class="xciv-event-card__actions">
-				<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Recap', 'xciv-social' ); ?></button>
-			</div>
-		</article>
-
-		<p class="xciv-feed-empty xciv-muted" data-event-empty hidden><?php esc_html_e( 'No events in this view. Try another filter.', 'xciv-social' ); ?></p>
+		<p class="xciv-feed-empty xciv-muted" data-event-empty <?php echo $occurrences ? 'hidden' : ''; ?>>
+			<?php esc_html_e( 'No events in this view. Try another filter.', 'xciv-social' ); ?>
+		</p>
 	</section>
 </main>
 <?php

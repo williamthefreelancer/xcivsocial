@@ -5,6 +5,8 @@
  * @package XCIV_Social
  */
 
+use XCIV\Theme\Support\EventsCatalog;
+
 get_template_part( 'template-parts/member/require', 'member' );
 get_header();
 
@@ -22,37 +24,9 @@ $weekday_labels = array(
 	__( 'S', 'xciv-social' ),
 );
 
-/* Compact Dec 2026 grid: Wed start (offset 3). Marks on 4, 11, 16. */
-$calendar_days = array();
-for ( $i = 0; $i < 3; $i++ ) {
-	$calendar_days[] = array(
-		'day'     => 29 + $i,
-		'outside' => true,
-		'marks'   => array(),
-	);
-}
-$event_marks = array(
-	4  => __( 'Dinner', 'xciv-social' ),
-	11 => __( 'Club', 'xciv-social' ),
-	16 => __( 'Roundtable', 'xciv-social' ),
-);
-for ( $d = 1; $d <= 31; $d++ ) {
-	$calendar_days[] = array(
-		'day'     => $d,
-		'outside' => false,
-		'today'   => 24 === $d,
-		'marks'   => isset( $event_marks[ $d ] ) ? array( $event_marks[ $d ] ) : array(),
-	);
-}
-$trailing = 0;
-while ( count( $calendar_days ) % 7 !== 0 ) {
-	++$trailing;
-	$calendar_days[] = array(
-		'day'     => $trailing,
-		'outside' => true,
-		'marks'   => array(),
-	);
-}
+$upcoming_trips = EventsCatalog::occurrences( 3 );
+$mini_cal       = EventsCatalog::dashboard_calendar();
+$calendar_days  = $mini_cal['days'];
 ?>
 <main id="main" class="xciv-shell xciv-dashboard" data-xciv-dashboard>
 	<header class="xciv-section-head xciv-section-head--split">
@@ -80,7 +54,7 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 				<header class="xciv-panel__head">
 					<p class="xciv-dashboard__eyebrow xciv-muted"><?php esc_html_e( 'Featured briefing', 'xciv-social' ); ?></p>
 					<h2 class="xciv-panel__title"><?php esc_html_e( 'How warm intros compound inside a closed room', 'xciv-social' ); ?></h2>
-					<p class="xciv-panel__desc"><?php esc_html_e( 'A short member briefing on cadence, reciprocity, and what to bring to December dinners.', 'xciv-social' ); ?></p>
+					<p class="xciv-panel__desc"><?php esc_html_e( 'A short member briefing on cadence, reciprocity, and what to bring to the next gathering.', 'xciv-social' ); ?></p>
 				</header>
 
 				<div class="xciv-panel__body">
@@ -128,6 +102,26 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 					<a class="xciv-btn xciv-btn--ghost" href="<?php echo esc_url( home_url( '/member-feed/' ) ); ?>"><?php esc_html_e( 'View all', 'xciv-social' ); ?></a>
 				</header>
 				<div class="xciv-panel__body xciv-profile-activity">
+					<?php if ( $upcoming_trips ) : ?>
+						<article class="xciv-activity-row">
+							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>S</span></span>
+							<div>
+								<p>
+									<strong><?php esc_html_e( 'Super Ninety Four Events', 'xciv-social' ); ?></strong>
+									<?php esc_html_e( 'opened purchases for Harrisburg to Lynn.', 'xciv-social' ); ?>
+								</p>
+								<small class="xciv-muted">
+									<?php
+									printf(
+										/* translators: %s: trip meta line */
+										esc_html__( 'Event · %s', 'xciv-social' ),
+										esc_html( (string) $upcoming_trips[0]['meta'] )
+									);
+									?>
+								</small>
+							</div>
+						</article>
+					<?php endif; ?>
 					<article class="xciv-activity-row">
 						<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>M</span></span>
 						<div>
@@ -136,16 +130,6 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 								<?php esc_html_e( 'posted an opportunity on remittance corridors.', 'xciv-social' ); ?>
 							</p>
 							<small class="xciv-muted"><?php esc_html_e( '2h ago · Opportunity · 12 appreciations', 'xciv-social' ); ?></small>
-						</div>
-					</article>
-					<article class="xciv-activity-row">
-						<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>J</span></span>
-						<div>
-							<p>
-								<strong><?php esc_html_e( 'Jonah Reyes', 'xciv-social' ); ?></strong>
-								<?php esc_html_e( 'opened RSVPs for Table Dinner: One Intro Before Dessert.', 'xciv-social' ); ?>
-							</p>
-							<small class="xciv-muted"><?php esc_html_e( '5h ago · Event · Miami · 18 going', 'xciv-social' ); ?></small>
 						</div>
 					</article>
 					<article class="xciv-activity-row">
@@ -182,39 +166,23 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 					<a class="xciv-btn xciv-btn--ghost" href="<?php echo esc_url( home_url( '/events/' ) ); ?>"><?php esc_html_e( 'All', 'xciv-social' ); ?></a>
 				</header>
 				<div class="xciv-panel__body xciv-dashboard-schedule">
-					<article class="xciv-dashboard-schedule__item">
-						<div class="xciv-event-card__date" aria-hidden="true">
-							<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-							<span class="xciv-event-card__day">04</span>
-						</div>
-						<div>
-							<p class="xciv-muted xciv-dashboard-schedule__meta"><?php esc_html_e( 'Thu · 7:30 PM · Miami', 'xciv-social' ); ?></p>
-							<strong><?php esc_html_e( 'Table Dinner: One Intro Before Dessert', 'xciv-social' ); ?></strong>
-							<p class="xciv-muted"><?php esc_html_e( '18 going · You are going', 'xciv-social' ); ?></p>
-						</div>
-					</article>
-					<article class="xciv-dashboard-schedule__item">
-						<div class="xciv-event-card__date" aria-hidden="true">
-							<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-							<span class="xciv-event-card__day">11</span>
-						</div>
-						<div>
-							<p class="xciv-muted xciv-dashboard-schedule__meta"><?php esc_html_e( 'Thu · 9:00 PM · Dubai', 'xciv-social' ); ?></p>
-							<strong><?php esc_html_e( 'After-Hours Operators Club', 'xciv-social' ); ?></strong>
-							<p class="xciv-muted"><?php esc_html_e( '24 interested', 'xciv-social' ); ?></p>
-						</div>
-					</article>
-					<article class="xciv-dashboard-schedule__item">
-						<div class="xciv-event-card__date" aria-hidden="true">
-							<span class="xciv-event-card__month"><?php esc_html_e( 'Dec', 'xciv-social' ); ?></span>
-							<span class="xciv-event-card__day">16</span>
-						</div>
-						<div>
-							<p class="xciv-muted xciv-dashboard-schedule__meta"><?php esc_html_e( 'Tue · 6:00 PM · Lagos', 'xciv-social' ); ?></p>
-							<strong><?php esc_html_e( 'Corridor Operators Roundtable', 'xciv-social' ); ?></strong>
-							<p class="xciv-muted"><?php esc_html_e( '11 going · You are hosting', 'xciv-social' ); ?></p>
-						</div>
-					</article>
+					<?php if ( $upcoming_trips ) : ?>
+						<?php foreach ( $upcoming_trips as $trip ) : ?>
+							<article class="xciv-dashboard-schedule__item">
+								<div class="xciv-event-card__date" aria-hidden="true">
+									<span class="xciv-event-card__month"><?php echo esc_html( (string) $trip['month'] ); ?></span>
+									<span class="xciv-event-card__day"><?php echo esc_html( (string) $trip['day'] ); ?></span>
+								</div>
+								<div>
+									<p class="xciv-muted xciv-dashboard-schedule__meta"><?php echo esc_html( (string) $trip['meta'] ); ?></p>
+									<strong><?php echo esc_html( (string) $trip['title'] ); ?></strong>
+									<p class="xciv-muted"><?php esc_html_e( 'Paid · Recurring every 4 months', 'xciv-social' ); ?></p>
+								</div>
+							</article>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<p class="xciv-muted"><?php esc_html_e( 'No upcoming events scheduled.', 'xciv-social' ); ?></p>
+					<?php endif; ?>
 				</div>
 			</section>
 
@@ -222,7 +190,7 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 				<header class="xciv-panel__head xciv-dashboard__panel-head">
 					<div>
 						<h2 class="xciv-panel__title"><?php esc_html_e( 'Calendar', 'xciv-social' ); ?></h2>
-						<p class="xciv-panel__desc"><?php esc_html_e( 'December 2026', 'xciv-social' ); ?></p>
+						<p class="xciv-panel__desc"><?php echo esc_html( (string) $mini_cal['label'] ); ?></p>
 					</div>
 					<a class="xciv-btn xciv-btn--ghost" href="<?php echo esc_url( home_url( '/event-calendar/' ) ); ?>"><?php esc_html_e( 'Expand', 'xciv-social' ); ?></a>
 				</header>
@@ -278,10 +246,10 @@ while ( count( $calendar_days ) % 7 !== 0 ) {
 							<span class="xciv-dashboard-threads__badge"><?php esc_html_e( '2', 'xciv-social' ); ?></span>
 						</li>
 						<li>
-							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>J</span></span>
+							<span class="xciv-avatar xciv-avatar--sm" aria-hidden="true"><span>S</span></span>
 							<span class="xciv-dashboard-threads__copy">
-								<strong><?php esc_html_e( 'Jonah Reyes', 'xciv-social' ); ?></strong>
-								<small class="xciv-muted"><?php esc_html_e( 'Seat confirmed for Dec 4 dinner.', 'xciv-social' ); ?></small>
+								<strong><?php esc_html_e( 'Super Ninety Four Events', 'xciv-social' ); ?></strong>
+								<small class="xciv-muted"><?php esc_html_e( 'Harrisburg to Lynn purchases are open.', 'xciv-social' ); ?></small>
 							</span>
 						</li>
 						<li>

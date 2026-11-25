@@ -1417,6 +1417,27 @@ a.xciv-avatar {
   font-weight: 600;
 }
 
+.xciv-event-card__badge {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.12rem 0.45rem;
+  border: 1px solid rgba(196, 163, 90, 0.45);
+  background: rgba(196, 163, 90, 0.12);
+  color: var(--xciv-accent);
+  font-family: var(--xciv-font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.xciv-btn.is-purchased {
+  background: rgba(196, 163, 90, 0.16);
+  color: var(--xciv-accent);
+  border-color: rgba(196, 163, 90, 0.45);
+}
+
 .xciv-event-card__desc {
   margin: 0;
   color: var(--xciv-muted);

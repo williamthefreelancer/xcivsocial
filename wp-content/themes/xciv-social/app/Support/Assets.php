@@ -84,6 +84,18 @@ final class Assets {
 			'events.js'
 		);
 
+		if ( wp_script_is( 'xciv-events', 'enqueued' ) ) {
+			$next = EventsCatalog::next_occurrence();
+			wp_localize_script(
+				'xciv-events',
+				'xcivEvents',
+				array(
+					'calendar'    => EventsCatalog::calendar_events( 8 ),
+					'initialDate' => $next ? (string) $next['start'] : '',
+				)
+			);
+		}
+
 		self::enqueue_template_script(
 			'page-templates/profile.php',
 			'xciv-profile',
