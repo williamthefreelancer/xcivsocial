@@ -61,25 +61,18 @@ final class OnlineEventFunnel {
 
 		return array(
 			array(
-				'id'      => 'general',
-				'name'    => __( 'General Admission', 'xciv-social' ),
-				'price'   => 45,
-				'desc'    => __( 'Live access to the salon, chat feed, and post-event replay link.', 'xciv-social' ),
+				'id'      => 'township-backways-route',
+				'name'    => __( 'The Township Backways Route', 'xciv-social' ),
+				'price'   => 97,
+				'desc'    => __( 'Private intimate party gathering — Harrisburg, NC / Harris Houston through Cary, NC. Saturday nights.', 'xciv-social' ),
 				'popular' => false,
 			),
 			array(
-				'id'      => 'vip',
-				'name'    => __( 'VIP Circle', 'xciv-social' ),
-				'price'   => 95,
-				'desc'    => __( 'Priority seating in Meet breakouts, name shout-out, and VIP Q&A lane.', 'xciv-social' ),
+				'id'      => 'harrisburg-to-lynn',
+				'name'    => __( 'Harrisburg to Lynn', 'xciv-social' ),
+				'price'   => 397,
+				'desc'    => __( 'Main offer — paid roundtrip from Charlotte, NC to Lynn, MA. Four days, Sunday through Wednesday.', 'xciv-social' ),
 				'popular' => true,
-			),
-			array(
-				'id'      => 'host-pass',
-				'name'    => __( 'Host Pass', 'xciv-social' ),
-				'price'   => 180,
-				'desc'    => __( 'Bring a +1, co-host a 5-minute intro, and unlock the private after-room.', 'xciv-social' ),
-				'popular' => false,
 			),
 		);
 	}
@@ -153,10 +146,10 @@ final class OnlineEventFunnel {
 			),
 			array(
 				'id'    => 'next-trip',
-				'name'  => __( 'Harrisburg to Lynn pre-sale hold', 'xciv-social' ),
-				'price' => 0,
-				'desc'  => __( 'Free hold on the next paid road trip — convert when tickets drop.', 'xciv-social' ),
-				'cta'   => __( 'Hold my seat', 'xciv-social' ),
+				'name'  => __( 'Harrisburg to Lynn', 'xciv-social' ),
+				'price' => 397,
+				'desc'  => __( 'Main offer — hold your seat on the Charlotte to Lynn, MA road trip.', 'xciv-social' ),
+				'cta'   => __( 'Add Lynn trip', 'xciv-social' ),
 			),
 		);
 	}

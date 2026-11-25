@@ -42,25 +42,18 @@ final class SettingsStore {
 			),
 			'tickets'   => array(
 				array(
-					'id'      => 'general',
-					'name'    => 'General Admission',
-					'price'   => 45,
-					'desc'    => 'Live access to the salon, chat feed, and post-event replay link.',
+					'id'      => 'township-backways-route',
+					'name'    => 'The Township Backways Route',
+					'price'   => 97,
+					'desc'    => 'Private intimate party gathering — Harrisburg, NC / Harris Houston through Cary, NC. Saturday nights.',
 					'popular' => false,
 				),
 				array(
-					'id'      => 'vip',
-					'name'    => 'VIP Circle',
-					'price'   => 95,
-					'desc'    => 'Priority seating in Meet breakouts, name shout-out, and VIP Q&A lane.',
+					'id'      => 'harrisburg-to-lynn',
+					'name'    => 'Harrisburg to Lynn',
+					'price'   => 397,
+					'desc'    => 'Main offer — paid roundtrip from Charlotte, NC to Lynn, MA. Four days, Sunday through Wednesday.',
 					'popular' => true,
-				),
-				array(
-					'id'      => 'host-pass',
-					'name'    => 'Host Pass',
-					'price'   => 180,
-					'desc'    => 'Bring a +1, co-host a 5-minute intro, and unlock the private after-room.',
-					'popular' => false,
 				),
 			),
 			'addons'    => array(
@@ -93,10 +86,10 @@ final class SettingsStore {
 				),
 				array(
 					'id'    => 'next-trip',
-					'name'  => 'Harrisburg to Lynn pre-sale hold',
-					'price' => 0,
-					'desc'  => 'Free hold on the next paid road trip — convert when tickets drop.',
-					'cta'   => 'Hold my seat',
+					'name'  => 'Harrisburg to Lynn',
+					'price' => 397,
+					'desc'  => 'Main offer — hold your seat on the Charlotte to Lynn, MA road trip.',
+					'cta'   => 'Add Lynn trip',
 				),
 			),
 			'dashboard' => array(

@@ -188,11 +188,12 @@ $attendee_chats  = AttendeeChats::threads();
 									<strong><?php echo esc_html( (string) $trip['title'] ); ?></strong>
 									<p class="xciv-muted">
 										<?php
-										echo esc_html(
-											! empty( $trip['paid'] )
-												? __( 'Paid · Every 4 months', 'xciv-social' )
-												: __( 'Private · Monthly Saturday', 'xciv-social' )
-										);
+										$price_label = ! empty( $trip['price_label'] ) ? (string) $trip['price_label'] : '';
+										if ( 'harrisburg-to-lynn' === (string) $trip['series_id'] ) {
+											echo esc_html( $price_label ? $price_label . ' · ' . __( 'Every 4 months', 'xciv-social' ) : __( 'Paid · Every 4 months', 'xciv-social' ) );
+										} else {
+											echo esc_html( $price_label ? $price_label . ' · ' . __( 'Monthly Saturday', 'xciv-social' ) : __( 'Private · Monthly Saturday', 'xciv-social' ) );
+										}
 										?>
 									</p>
 								</div>

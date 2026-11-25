@@ -271,6 +271,12 @@
       }
       detail.innerHTML = items.map(function (item) {
         var badge = item.presaleWaitlist ? 'Pre-sale' : (item.paid ? 'Paid' : 'Private');
+        var priceBadge =
+          item.price > 0
+            ? ' <span class="xciv-event-card__badge xciv-event-card__badge--price">$' +
+              Math.round(item.price) +
+              '</span>'
+            : '';
         var chatHref = '/messages/?chat=' + encodeURIComponent(item.seriesId || '');
         var chat =
           '<a class="xciv-btn xciv-btn--ghost" href="' + chatHref + '">Attendees chat</a>';
@@ -293,7 +299,7 @@
         return (
           '<article class="xciv-day-event">' +
             '<div class="xciv-day-event__time"><strong>' + escapeHtml(item.time) + '</strong><span class="xciv-muted">' + escapeHtml(item.city) + '</span></div>' +
-            '<div><h3>' + escapeHtml(item.title) + ' <span class="xciv-event-card__badge">' + badge + '</span></h3><p class="xciv-muted">' + escapeHtml(item.host) + '</p></div>' +
+            '<div><h3>' + escapeHtml(item.title) + ' <span class="xciv-event-card__badge">' + badge + '</span>' + priceBadge + '</h3><p class="xciv-muted">' + escapeHtml(item.host) + '</p></div>' +
             '<div class="xciv-day-event__actions">' + chat + cta + '</div>' +
           '</article>'
         );

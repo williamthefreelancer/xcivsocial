@@ -27,6 +27,7 @@ final class EventsCatalog {
 				'route'           => __( 'Charlotte, NC → Lynn, MA', 'xciv-social' ),
 				'vertical'        => 'club_event',
 				'paid'            => true,
+				'price'           => 397,
 				'duration_days'   => 4,
 				'interval_months' => 4,
 				'weekday'         => 0, // Sunday
@@ -46,7 +47,8 @@ final class EventsCatalog {
 				'destination'     => 'Cary',
 				'route'           => __( 'Harrisburg, NC / Harris Houston → Cary, NC', 'xciv-social' ),
 				'vertical'        => 'nightlife',
-				'paid'            => false,
+				'paid'            => true,
+				'price'           => 97,
 				'duration_days'   => 1,
 				'interval_months' => 1,
 				'weekday'         => 6, // Saturday
@@ -124,11 +126,13 @@ final class EventsCatalog {
 
 			$paid     = ! empty( $trip['paid'] );
 			$waitlist = ! empty( $trip['presale_waitlist'] );
+			$price    = (float) ( $trip['price'] ?? 0 );
 			$host     = $paid
 				? sprintf(
-					/* translators: 1: host name, 2: route label */
-					__( '%1$s · Paid · %2$s', 'xciv-social' ),
+					/* translators: 1: host name, 2: price label, 3: route label */
+					__( '%1$s · %2$s · %3$s', 'xciv-social' ),
 					(string) $trip['host_short'],
+					$price > 0 ? '$' . number_format( $price, 0 ) : __( 'Paid', 'xciv-social' ),
 					(string) $trip['route']
 				)
 				: sprintf(
@@ -148,6 +152,7 @@ final class EventsCatalog {
 					'host'            => $host,
 					'going'           => false,
 					'paid'            => $paid,
+					'price'           => $price,
 					'presaleWaitlist' => $waitlist,
 					'seriesId'        => (string) $trip['series_id'],
 					'occurrenceId'    => (string) $trip['id'],
@@ -243,6 +248,7 @@ final class EventsCatalog {
 	private static function format_occurrence( array $series, \DateTimeImmutable $start, \DateTimeImmutable $end, int $index ): array {
 		$paid     = ! empty( $series['paid'] );
 		$waitlist = ! empty( $series['presale_waitlist'] );
+		$price    = (float) ( $series['price'] ?? 0 );
 		$same     = $start->format( 'Y-m-d' ) === $end->format( 'Y-m-d' );
 		$range    = $same
 			? $start->format( 'M j, Y' )
@@ -257,6 +263,7 @@ final class EventsCatalog {
 		if ( $waitlist ) {
 			$status = __( 'Pre-sale', 'xciv-social' );
 		}
+		$price_label = $price > 0 ? '$' . number_format( $price, 0 ) : '';
 
 		return array(
 			'id'               => (string) $series['id'] . '-' . $start->format( 'Ymd' ),
@@ -268,6 +275,8 @@ final class EventsCatalog {
 			'route'            => (string) $series['route'],
 			'vertical'         => (string) $series['vertical'],
 			'paid'             => $paid,
+			'price'            => $price,
+			'price_label'      => $price_label,
 			'presale_waitlist' => $waitlist,
 			'host'             => (string) $series['host'],
 			'host_short'       => (string) $series['host_short'],
@@ -280,12 +289,13 @@ final class EventsCatalog {
 			'weekday'          => $start->format( 'D' ),
 			'range'            => $range,
 			'meta'             => sprintf(
-				/* translators: 1: day span, 2: date range, 3: route, 4: status */
-				__( '%1$s · %2$s · %3$s · %4$s', 'xciv-social' ),
+				/* translators: 1: day span, 2: date range, 3: route, 4: status, 5: price */
+				__( '%1$s · %2$s · %3$s · %4$s%5$s', 'xciv-social' ),
 				(string) $series['day_span'],
 				$range,
 				(string) $series['route'],
-				$status
+				$status,
+				$price_label ? ' · ' . $price_label : ''
 			),
 			'scope'            => 'upcoming',
 			'index'            => $index,

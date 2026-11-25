@@ -86,6 +86,9 @@ $occurrences = EventsCatalog::occurrences( 12 );
 					<h2 class="xciv-event-card__title">
 						<?php echo esc_html( (string) $trip['title'] ); ?>
 						<span class="xciv-event-card__badge"><?php echo esc_html( (string) $trip['badge'] ); ?></span>
+						<?php if ( ! empty( $trip['price_label'] ) ) : ?>
+							<span class="xciv-event-card__badge xciv-event-card__badge--price"><?php echo esc_html( (string) $trip['price_label'] ); ?></span>
+						<?php endif; ?>
 					</h2>
 					<p class="xciv-event-card__desc"><?php echo esc_html( (string) $trip['description'] ); ?></p>
 					<?php if ( $is_waitlist ) : ?>
