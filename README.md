@@ -1,6 +1,6 @@
 # XCIV Social
 
-Private social network for sovereign hospitality and capital operators. WordPress MVC theme + core plugin, WPGraphQL, Vanilla JS.
+Private social network for sovereign hospitality and capital operators. A platform of SUPR XCIV PLATFORM HOLDINGS LLC & THE SUPER NINETY FOUR EVENTS COMPANY. WordPress MVC theme + core plugin, WPGraphQL, Vanilla JS.
 
 **Live:** [https://xcivsocial.com](https://xcivsocial.com)
 
