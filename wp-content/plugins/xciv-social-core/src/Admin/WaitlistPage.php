@@ -57,13 +57,17 @@ final class WaitlistPage {
 			);
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$counts = $wpdb->get_results(
 			"SELECT series_id, COUNT(*) AS total FROM {$table} GROUP BY series_id",
 			ARRAY_A
 		);
 		$count_map = array();
+		$total     = 0;
 		foreach ( (array) $counts as $row ) {
-			$count_map[ (string) $row['series_id'] ] = (int) $row['total'];
+			$series_total                        = (int) $row['total'];
+			$count_map[ (string) $row['series_id'] ] = $series_total;
+			$total                              += $series_total;
 		}
 
 		include XCIV_CORE_DIR . 'views/admin-waitlists.php';

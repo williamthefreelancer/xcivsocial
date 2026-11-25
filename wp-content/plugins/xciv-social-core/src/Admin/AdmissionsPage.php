@@ -37,10 +37,39 @@ final class AdmissionsPage {
 
 		global $wpdb;
 		$table = ApplicationTable::table_name();
-		$rows  = $wpdb->get_results(
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
 			"SELECT * FROM {$table} WHERE status = 'pending_review' ORDER BY created_at DESC LIMIT 50",
 			ARRAY_A
 		);
+
+		$counts = array(
+			'pending'  => 0,
+			'approved' => 0,
+			'rejected' => 0,
+			'total'    => 0,
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$status_rows = $wpdb->get_results(
+			"SELECT status, COUNT(*) AS total FROM {$table} GROUP BY status",
+			ARRAY_A
+		);
+
+		foreach ( (array) $status_rows as $status_row ) {
+			$status = (string) $status_row['status'];
+			$total  = (int) $status_row['total'];
+			$counts['total'] += $total;
+
+			if ( 'pending_review' === $status ) {
+				$counts['pending'] = $total;
+			} elseif ( 'approved' === $status ) {
+				$counts['approved'] = $total;
+			} elseif ( 'rejected' === $status ) {
+				$counts['rejected'] = $total;
+			}
+		}
 
 		include XCIV_CORE_DIR . 'views/admin-admissions.php';
 	}
