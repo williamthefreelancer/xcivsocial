@@ -7,6 +7,7 @@
 
 use XCIV\Theme\Support\AttendeeChats;
 use XCIV\Theme\Support\EventsCatalog;
+use XCIV\Theme\Support\VideoEmbed;
 
 get_template_part( 'template-parts/member/require', 'member' );
 get_header();
@@ -60,36 +61,46 @@ $attendee_chats  = AttendeeChats::threads();
 				</header>
 
 				<div class="xciv-panel__body">
-					<figure class="xciv-video" data-xciv-video>
-						<?php
-						// Set a hosted MP4 URL when the briefing asset is ready.
-						$briefing_src = '';
-						?>
-						<div class="xciv-video__frame<?php echo $briefing_src ? '' : ' is-empty'; ?>">
-							<?php if ( $briefing_src ) : ?>
-								<video
-									class="xciv-video__media"
-									controls
-									playsinline
-									preload="metadata"
-									data-video-el
-								>
-									<source src="<?php echo esc_url( $briefing_src ); ?>" type="video/mp4">
-									<?php esc_html_e( 'Your browser does not support embedded video.', 'xciv-social' ); ?>
-								</video>
-							<?php else : ?>
-								<div class="xciv-video__poster" aria-hidden="true"></div>
-							<?php endif; ?>
-							<button type="button" class="xciv-video__play" data-video-play aria-label="<?php esc_attr_e( 'Play briefing', 'xciv-social' ); ?>">
+					<?php
+					/*
+					 * Paste a YouTube, Vimeo, or Bunny Stream URL (watch / share / embed).
+					 * Bunny example: https://iframe.mediadelivery.net/embed/{libraryId}/{videoId}
+					 */
+					$briefing_url   = '';
+					$briefing_url   = (string) apply_filters( 'xciv_dashboard_briefing_embed', $briefing_url );
+					$briefing_embed = VideoEmbed::resolve( $briefing_url );
+					$has_embed      = is_array( $briefing_embed );
+					?>
+					<figure
+						class="xciv-video"
+						data-xciv-video
+						<?php if ( $has_embed ) : ?>
+							data-embed-provider="<?php echo esc_attr( (string) $briefing_embed['provider'] ); ?>"
+							data-embed-src="<?php echo esc_url( (string) $briefing_embed['autoplay'] ); ?>"
+						<?php endif; ?>
+					>
+						<div class="xciv-video__frame<?php echo $has_embed ? '' : ' is-empty'; ?>" data-video-frame>
+							<div class="xciv-video__poster" data-video-poster aria-hidden="true"></div>
+							<button
+								type="button"
+								class="xciv-video__play"
+								data-video-play
+								aria-label="<?php echo $has_embed ? esc_attr__( 'Play briefing', 'xciv-social' ) : esc_attr__( 'Briefing embed unavailable', 'xciv-social' ); ?>"
+								<?php disabled( ! $has_embed ); ?>
+							>
 								<span class="xciv-video__play-icon" aria-hidden="true"></span>
 							</button>
-							<div class="xciv-video__meta" aria-hidden="true">
+							<div class="xciv-video__meta" data-video-meta aria-hidden="true">
 								<span><?php esc_html_e( 'XCIV Briefing', 'xciv-social' ); ?></span>
-								<span><?php esc_html_e( '6:42', 'xciv-social' ); ?></span>
+								<span><?php echo $has_embed ? esc_html( strtoupper( (string) $briefing_embed['provider'] ) ) : esc_html__( 'Embed', 'xciv-social' ); ?></span>
 							</div>
 						</div>
 						<figcaption class="xciv-video__caption xciv-muted">
-							<?php esc_html_e( 'Member briefing player — drop an MP4 URL into $briefing_src when ready.', 'xciv-social' ); ?>
+							<?php
+							echo $has_embed
+								? esc_html__( 'Member briefing — press play to watch.', 'xciv-social' )
+								: esc_html__( 'Member briefing player — set a YouTube, Vimeo, or Bunny Stream URL via xciv_dashboard_briefing_embed.', 'xciv-social' );
+							?>
 						</figcaption>
 					</figure>
 				</div>
