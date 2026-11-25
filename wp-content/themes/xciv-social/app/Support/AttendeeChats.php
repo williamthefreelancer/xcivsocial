@@ -19,56 +19,17 @@ final class AttendeeChats {
 	public static function threads(): array {
 		return array(
 			array(
-				'id'         => 'harrisburg-to-lynn',
-				'series_id'  => 'harrisburg-to-lynn',
-				'name'       => __( 'Harrisburg to Lynn · Attendees', 'xciv-social' ),
-				'initial'    => 'H',
-				'preview'    => __( 'Ask hard questions here. Soft talk stays outside.', 'xciv-social' ),
-				'time'       => __( 'now', 'xciv-social' ),
-				'unread'     => 3,
-				'online'     => true,
-				'active'     => true,
-				'group'      => true,
-				'meta'       => __( 'Attendees · Radical honesty · Charlotte → Lynn', 'xciv-social' ),
-				'messages'   => array(
-					array(
-						'mine' => false,
-						'text' => __( 'This room is for people actually coming on Harrisburg to Lynn. Radical honesty only — if you are unsure, say that out loud so we can plan real headcount.', 'xciv-social' ),
-						'time' => '9:40 AM',
-						'from' => __( 'Super Ninety Four', 'xciv-social' ),
-					),
-					array(
-						'mine' => false,
-						'text' => __( 'Pre-sale waitlist is open. No soft sell: when tickets drop, waitlist members get first look. Logistics lock once we hit the number.', 'xciv-social' ),
-						'time' => '9:42 AM',
-						'from' => __( 'Super Ninety Four', 'xciv-social' ),
-					),
-					array(
-						'mine' => false,
-						'text' => __( 'Charlotte departure — overnight or push-through? Need a straight answer from anyone already on the waitlist.', 'xciv-social' ),
-						'time' => '9:48 AM',
-						'from' => __( 'Member', 'xciv-social' ),
-					),
-					array(
-						'mine' => false,
-						'text' => __( 'Overnight. Exact window posts when waitlist converts. Ask the hard questions here — silence does not get you clarity.', 'xciv-social' ),
-						'time' => '9:51 AM',
-						'from' => __( 'Super Ninety Four', 'xciv-social' ),
-					),
-				),
-			),
-			array(
 				'id'         => 'township-backways-route',
 				'series_id'  => 'township-backways-route',
 				'name'       => __( 'Township Backways · Attendees', 'xciv-social' ),
 				'initial'    => 'B',
 				'preview'    => __( 'Private does not mean vague. Say what you need.', 'xciv-social' ),
-				'time'       => __( '12m', 'xciv-social' ),
+				'time'       => __( 'now', 'xciv-social' ),
 				'unread'     => 2,
 				'online'     => true,
-				'active'     => false,
+				'active'     => true,
 				'group'      => true,
-				'meta'       => __( 'Attendees · Radical honesty · Harrisburg → Cary', 'xciv-social' ),
+				'meta'       => __( 'Attendees · Radical honesty · Meet William · MA or NC', 'xciv-social' ),
 				'messages'   => array(
 					array(
 						'mine' => false,
@@ -90,7 +51,7 @@ final class AttendeeChats {
 					),
 					array(
 						'mine' => false,
-						'text' => __( 'Tight. Waitlist first. I will post the Saturday window here the moment it is locked. Keep the conversation honest.', 'xciv-social' ),
+						'text' => __( 'Tight. Waitlist first. I will post the Saturday and Tuesday windows here the moment they are locked. Keep the conversation honest.', 'xciv-social' ),
 						'time' => '8:21 AM',
 						'from' => __( 'Super Ninety Four', 'xciv-social' ),
 					),

@@ -19,41 +19,21 @@ final class EventsCatalog {
 	public static function all_series(): array {
 		return array(
 			array(
-				'id'              => 'harrisburg-to-lynn',
-				'title'           => __( 'Harrisburg to Lynn', 'xciv-social' ),
-				'description'     => __( 'Paid roundtrip from Charlotte, NC to Lynn, MA. Four days, Sunday through Wednesday. Recurs every four months.', 'xciv-social' ),
-				'city'            => 'Charlotte',
-				'destination'     => 'Lynn',
-				'route'           => __( 'Charlotte, NC → Lynn, MA', 'xciv-social' ),
-				'vertical'        => 'club_event',
-				'paid'            => true,
-				'price'           => 397,
-				'duration_days'   => 4,
-				'interval_months' => 4,
-				'weekday'         => 0, // Sunday
-				'day_span'        => __( 'Sun–Wed', 'xciv-social' ),
-				'anchor'          => '2026-11-29',
-				'host'            => __( 'THE SUPER NINETY FOUR EVENTS COMPANY', 'xciv-social' ),
-				'host_short'      => __( 'Super Ninety Four Events', 'xciv-social' ),
-				'time_label'      => __( 'All day', 'xciv-social' ),
-				'mark_label'      => __( 'Harrisburg→Lynn', 'xciv-social' ),
-				'presale_waitlist' => true,
-			),
-			array(
 				'id'              => 'township-backways-route',
 				'title'           => __( 'The Township Backways Route', 'xciv-social' ),
-				'description'     => __( 'A private intimate party along the Township Backways Route — Harrisburg, NC / Harris Houston area through to Cary, NC. Saturday nights, once a month.', 'xciv-social' ),
+				'description'     => __( 'A private intimate party along the Township Backways Route — Harrisburg, NC / Harris Houston area through to Cary, NC. Saturday and Tuesday evenings. Option to meet William A. Johnson in Massachusetts or North Carolina.', 'xciv-social' ),
 				'city'            => 'Harrisburg',
 				'destination'     => 'Cary',
-				'route'           => __( 'Harrisburg, NC / Harris Houston → Cary, NC', 'xciv-social' ),
+				'route'           => __( 'Meet William A. Johnson · MA or NC', 'xciv-social' ),
 				'vertical'        => 'nightlife',
 				'paid'            => true,
 				'price'           => 97,
 				'duration_days'   => 1,
 				'interval_months' => 1,
-				'weekday'         => 6, // Saturday
-				'day_span'        => __( 'Sat', 'xciv-social' ),
-				'recurrence'      => 'last_weekday_monthly',
+				'weekday'         => 6, // Saturday (legacy single-day fallback)
+				'weekdays'        => array( 2, 6 ), // Tuesday, Saturday
+				'day_span'        => __( 'Sat & Tue', 'xciv-social' ),
+				'recurrence'      => 'weekly_weekdays',
 				'anchor'          => '2026-11-28',
 				'host'            => __( 'THE SUPER NINETY FOUR EVENTS COMPANY', 'xciv-social' ),
 				'host_short'      => __( 'Super Ninety Four Events', 'xciv-social' ),
@@ -222,12 +202,12 @@ final class EventsCatalog {
 			return array();
 		}
 
-		$weekday = (int) ( $series['weekday'] ?? 0 );
-		$cursor  = $anchor;
-		$out     = array();
-		$guard   = 0;
+		$weekdays = self::series_weekdays( $series );
+		$cursor   = self::snap_to_weekday( $anchor, $weekdays );
+		$out      = array();
+		$guard    = 0;
 
-		while ( count( $out ) < $limit && $guard < 72 ) {
+		while ( count( $out ) < $limit && $guard < 120 ) {
 			++$guard;
 			$end = $cursor->modify( '+' . ( (int) $series['duration_days'] - 1 ) . ' days' );
 
@@ -235,7 +215,7 @@ final class EventsCatalog {
 				$out[] = self::format_occurrence( $series, $cursor, $end, count( $out ) );
 			}
 
-			$cursor = self::advance_occurrence( $series, $cursor, $weekday );
+			$cursor = self::advance_occurrence( $series, $cursor, $weekdays[0] );
 		}
 
 		return $out;
@@ -306,9 +286,58 @@ final class EventsCatalog {
 
 	/**
 	 * @param array<string, mixed> $series Series definition.
+	 * @return list<int>
+	 */
+	private static function series_weekdays( array $series ): array {
+		if ( ! empty( $series['weekdays'] ) && is_array( $series['weekdays'] ) ) {
+			$days = array();
+			foreach ( $series['weekdays'] as $day ) {
+				$days[] = (int) $day;
+			}
+			$days = array_values( array_unique( $days ) );
+			sort( $days );
+			return $days !== array() ? $days : array( (int) ( $series['weekday'] ?? 0 ) );
+		}
+
+		return array( (int) ( $series['weekday'] ?? 0 ) );
+	}
+
+	/**
+	 * @param list<int> $weekdays Allowed weekdays (0=Sun … 6=Sat).
+	 */
+	private static function snap_to_weekday( \DateTimeImmutable $from, array $weekdays ): \DateTimeImmutable {
+		$dow = (int) $from->format( 'w' );
+		if ( in_array( $dow, $weekdays, true ) ) {
+			return $from;
+		}
+
+		return self::next_weekday_after( $from, $weekdays );
+	}
+
+	/**
+	 * @param list<int> $weekdays Allowed weekdays (0=Sun … 6=Sat).
+	 */
+	private static function next_weekday_after( \DateTimeImmutable $from, array $weekdays ): \DateTimeImmutable {
+		$cursor = $from;
+		for ( $i = 1; $i <= 7; $i++ ) {
+			$cursor = $from->modify( '+' . $i . ' days' );
+			if ( in_array( (int) $cursor->format( 'w' ), $weekdays, true ) ) {
+				return $cursor;
+			}
+		}
+
+		return $from->modify( '+1 day' );
+	}
+
+	/**
+	 * @param array<string, mixed> $series Series definition.
 	 */
 	private static function advance_occurrence( array $series, \DateTimeImmutable $from, int $weekday ): \DateTimeImmutable {
 		$mode = (string) ( $series['recurrence'] ?? 'interval_snap' );
+
+		if ( 'weekly_weekdays' === $mode ) {
+			return self::next_weekday_after( $from, self::series_weekdays( $series ) );
+		}
 
 		if ( 'last_weekday_monthly' === $mode ) {
 			$month = $from->modify( 'first day of next month' );

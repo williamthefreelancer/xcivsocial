@@ -118,8 +118,8 @@ $initial      = strtoupper( substr( $display_name, 0, 1 ) );
 					<article class="xciv-activity-row">
 						<span class="xciv-feed-item__badge"><?php esc_html_e( 'Event', 'xciv-social' ); ?></span>
 						<div>
-							<p><?php esc_html_e( 'Purchased Harrisburg to Lynn — Charlotte, NC → Lynn, MA.', 'xciv-social' ); ?></p>
-							<small class="xciv-muted"><?php esc_html_e( 'Paid · Sun–Wed · Every 4 months', 'xciv-social' ); ?></small>
+							<p><?php esc_html_e( 'Purchased meet with William A. Johnson — North Carolina.', 'xciv-social' ); ?></p>
+							<small class="xciv-muted"><?php esc_html_e( 'Township Backways · Sat & Tue', 'xciv-social' ); ?></small>
 						</div>
 					</article>
 					<article class="xciv-activity-row">

@@ -129,7 +129,7 @@ $attendee_chats  = AttendeeChats::threads();
 							<div>
 								<p>
 									<strong><?php esc_html_e( 'Super Ninety Four Events', 'xciv-social' ); ?></strong>
-									<?php esc_html_e( 'opened purchases for Harrisburg to Lynn.', 'xciv-social' ); ?>
+									<?php esc_html_e( 'opened purchases for The Township Backways Route.', 'xciv-social' ); ?>
 								</p>
 								<small class="xciv-muted">
 									<?php
@@ -200,11 +200,7 @@ $attendee_chats  = AttendeeChats::threads();
 									<p class="xciv-muted">
 										<?php
 										$price_label = ! empty( $trip['price_label'] ) ? (string) $trip['price_label'] : '';
-										if ( 'harrisburg-to-lynn' === (string) $trip['series_id'] ) {
-											echo esc_html( $price_label ? $price_label . ' · ' . __( 'Every 4 months', 'xciv-social' ) : __( 'Paid · Every 4 months', 'xciv-social' ) );
-										} else {
-											echo esc_html( $price_label ? $price_label . ' · ' . __( 'Monthly Saturday', 'xciv-social' ) : __( 'Private · Monthly Saturday', 'xciv-social' ) );
-										}
+										echo esc_html( $price_label ? $price_label . ' · ' . __( 'Sat & Tue', 'xciv-social' ) : __( 'Private · Sat & Tue', 'xciv-social' ) );
 										?>
 									</p>
 								</div>

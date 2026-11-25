@@ -17,13 +17,13 @@ $tickets = OnlineEventFunnel::tickets();
 // phpcs:disable WordPress.Security.NonceVerification.Recommended
 $name    = isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['name'] ) ) : '';
 $email   = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( (string) $_GET['email'] ) ) : '';
-$ticket  = isset( $_GET['ticket'] ) ? sanitize_key( wp_unslash( (string) $_GET['ticket'] ) ) : 'harrisburg-to-lynn';
+$ticket  = isset( $_GET['ticket'] ) ? sanitize_key( wp_unslash( (string) $_GET['ticket'] ) ) : 'meet-william-north-carolina';
 $addons  = isset( $_GET['addons'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['addons'] ) ) : '';
 $upsell_q = isset( $_GET['upsells'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['upsells'] ) ) : '';
 $total   = isset( $_GET['total'] ) ? (float) $_GET['total'] : 0;
 // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-$ticket_name = __( 'Harrisburg to Lynn', 'xciv-social' );
+$ticket_name = __( 'Meet William A. Johnson — North Carolina', 'xciv-social' );
 foreach ( $tickets as $row ) {
 	if ( (string) $row['id'] === $ticket ) {
 		$ticket_name = (string) $row['name'];

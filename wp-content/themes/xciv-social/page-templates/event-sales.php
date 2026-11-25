@@ -50,8 +50,8 @@ $share   = home_url( (string) $event['sales_path'] );
 		<div class="xciv-funnel__primary">
 			<section class="xciv-panel" aria-labelledby="xciv-tickets-heading">
 				<header class="xciv-panel__head">
-					<h2 id="xciv-tickets-heading" class="xciv-panel__title"><?php esc_html_e( 'Choose your ticket', 'xciv-social' ); ?></h2>
-					<p class="xciv-panel__desc"><?php esc_html_e( 'Pick a tier — add-ons and upsells stack on the next step.', 'xciv-social' ); ?></p>
+					<h2 id="xciv-tickets-heading" class="xciv-panel__title"><?php esc_html_e( 'Choose where to meet', 'xciv-social' ); ?></h2>
+					<p class="xciv-panel__desc"><?php esc_html_e( 'Meet William A. Johnson in Massachusetts or North Carolina — add-ons and upsells stack next.', 'xciv-social' ); ?></p>
 				</header>
 				<div class="xciv-panel__body xciv-ticket-grid" data-ticket-grid role="radiogroup" aria-labelledby="xciv-tickets-heading">
 					<?php foreach ( $tickets as $ticket ) : ?>

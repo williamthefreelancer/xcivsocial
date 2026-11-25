@@ -14,8 +14,7 @@ use XCIV\Core\Models\WaitlistTable;
 final class WaitlistPage {
 
 	private const SERIES_LABELS = array(
-		'harrisburg-to-lynn'        => 'Harrisburg to Lynn',
-		'township-backways-route'   => 'The Township Backways Route',
+		'township-backways-route' => 'The Township Backways Route',
 	);
 
 	public static function init(): void {

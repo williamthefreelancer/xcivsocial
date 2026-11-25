@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $series_labels = array(
-	'harrisburg-to-lynn'      => __( 'Harrisburg to Lynn', 'xciv-social-core' ),
 	'township-backways-route' => __( 'The Township Backways Route', 'xciv-social-core' ),
 );
 

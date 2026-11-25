@@ -28,18 +28,18 @@ final class OnlineEventFunnel {
 		$host_short = (string) ( $general['host_short'] ?? __( 'Super Ninety Four Events', 'xciv-social' ) );
 
 		return array(
-			'id'             => (string) ( $event['id'] ?? 'virtual-salon-apr' ),
-			'slug'           => (string) ( $event['slug'] ?? 'virtual-salon' ),
-			'title'          => (string) ( $event['title'] ?? __( 'Virtual Salon: Warm Intros After Dark', 'xciv-social' ) ),
-			'subtitle'       => (string) ( $event['subtitle'] ?? __( 'A live online room for members and invited guests — broadcast, polls, and Q&A in one place.', 'xciv-social' ) ),
+			'id'             => (string) ( $event['id'] ?? 'township-backways-route' ),
+			'slug'           => (string) ( $event['slug'] ?? 'township-backways-route' ),
+			'title'          => (string) ( $event['title'] ?? __( 'The Township Backways Route', 'xciv-social' ) ),
+			'subtitle'       => (string) ( $event['subtitle'] ?? __( 'Private intimate gathering — meet William A. Johnson in Massachusetts or North Carolina. Saturday and Tuesday evenings.', 'xciv-social' ) ),
 			'host'           => $host,
 			'host_short'     => $host_short,
-			'date_label'     => (string) ( $event['date_label'] ?? __( 'Thursday, April 16, 2026', 'xciv-social' ) ),
-			'time_label'     => (string) ( $event['time_label'] ?? __( '8:00–9:30 PM ET', 'xciv-social' ) ),
-			'format'         => (string) ( $event['format'] ?? __( 'Online · Google Meet', 'xciv-social' ) ),
+			'date_label'     => (string) ( $event['date_label'] ?? __( 'Saturdays & Tuesdays', 'xciv-social' ) ),
+			'time_label'     => (string) ( $event['time_label'] ?? __( 'Evening', 'xciv-social' ) ),
+			'format'         => (string) ( $event['format'] ?? __( 'In person · MA or NC', 'xciv-social' ) ),
 			'meet_url'       => $meet,
-			'capacity'       => (int) ( $event['capacity'] ?? 120 ),
-			'seats_left'     => (int) ( $event['seats_left'] ?? 34 ),
+			'capacity'       => (int) ( $event['capacity'] ?? 40 ),
+			'seats_left'     => (int) ( $event['seats_left'] ?? 18 ),
 			'cover'          => '',
 			'sales_path'     => (string) ( $event['sales_path'] ?? '/event-sales/' ),
 			'thanks_path'    => (string) ( $event['thanks_path'] ?? '/event-thank-you/' ),
@@ -61,18 +61,18 @@ final class OnlineEventFunnel {
 
 		return array(
 			array(
-				'id'      => 'township-backways-route',
-				'name'    => __( 'The Township Backways Route', 'xciv-social' ),
+				'id'      => 'meet-william-north-carolina',
+				'name'    => __( 'Meet William A. Johnson — North Carolina', 'xciv-social' ),
 				'price'   => 97,
-				'desc'    => __( 'Private intimate party gathering — Harrisburg, NC / Harris Houston through Cary, NC. Saturday nights.', 'xciv-social' ),
-				'popular' => false,
+				'desc'    => __( 'The Township Backways Route · meet William A. Johnson in North Carolina. Saturday and Tuesday evenings along Harrisburg / Harris Houston through Cary.', 'xciv-social' ),
+				'popular' => true,
 			),
 			array(
-				'id'      => 'harrisburg-to-lynn',
-				'name'    => __( 'Harrisburg to Lynn', 'xciv-social' ),
-				'price'   => 397,
-				'desc'    => __( 'Main offer — paid roundtrip from Charlotte, NC to Lynn, MA. Four days, Sunday through Wednesday.', 'xciv-social' ),
-				'popular' => true,
+				'id'      => 'meet-william-massachusetts',
+				'name'    => __( 'Meet William A. Johnson — Massachusetts', 'xciv-social' ),
+				'price'   => 97,
+				'desc'    => __( 'The Township Backways Route · meet William A. Johnson in Massachusetts. Same Saturday and Tuesday cadence — choose the MA meetup window.', 'xciv-social' ),
+				'popular' => false,
 			),
 		);
 	}
@@ -143,13 +143,6 @@ final class OnlineEventFunnel {
 				'price' => 49,
 				'desc'  => __( 'Unlock the member feed, directory, and next three online rooms.', 'xciv-social' ),
 				'cta'   => __( 'Add membership', 'xciv-social' ),
-			),
-			array(
-				'id'    => 'next-trip',
-				'name'  => __( 'Harrisburg to Lynn', 'xciv-social' ),
-				'price' => 397,
-				'desc'  => __( 'Main offer — hold your seat on the Charlotte to Lynn, MA road trip.', 'xciv-social' ),
-				'cta'   => __( 'Add Lynn trip', 'xciv-social' ),
 			),
 		);
 	}

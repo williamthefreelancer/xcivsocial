@@ -17,7 +17,6 @@ use WP_REST_Response;
 final class WaitlistController {
 
 	private const ALLOWED_SERIES = array(
-		'harrisburg-to-lynn',
 		'township-backways-route',
 	);
 
