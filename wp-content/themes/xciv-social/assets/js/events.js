@@ -112,7 +112,7 @@
         return (
           '<article class="xciv-day-event">' +
             '<div class="xciv-day-event__time"><strong>' + item.time + '</strong><span class="xciv-muted">' + item.city + '</span></div>' +
-            '<div><h3>' + item.title + (item.paid ? ' <span class="xciv-event-card__badge">Paid</span>' : '') + '</h3><p class="xciv-muted">' + item.host + '</p></div>' +
+            '<div><h3>' + item.title + ' <span class="xciv-event-card__badge">' + (item.paid ? 'Paid' : 'Private') + '</span></h3><p class="xciv-muted">' + item.host + '</p></div>' +
             cta +
           '</article>'
         );

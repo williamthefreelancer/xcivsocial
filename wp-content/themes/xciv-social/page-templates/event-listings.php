@@ -10,7 +10,7 @@ use XCIV\Theme\Support\EventsCatalog;
 get_template_part( 'template-parts/member/require', 'member' );
 get_header();
 
-$occurrences = EventsCatalog::occurrences( 6 );
+$occurrences = EventsCatalog::occurrences( 12 );
 ?>
 <main id="main" class="xciv-shell xciv-events xciv-events--list" data-xciv-events-list>
 	<header class="xciv-section-head xciv-section-head--split">
@@ -60,13 +60,19 @@ $occurrences = EventsCatalog::occurrences( 6 );
 
 	<section class="xciv-event-list" data-event-list>
 		<?php foreach ( $occurrences as $trip ) : ?>
+			<?php
+			$is_paid     = ! empty( $trip['paid'] );
+			$vertical_label = 'nightlife' === $trip['vertical']
+				? __( 'Nightlife', 'xciv-social' )
+				: __( 'Club & event', 'xciv-social' );
+			?>
 			<article
 				class="xciv-event-card"
 				data-event-id="<?php echo esc_attr( (string) $trip['id'] ); ?>"
 				data-scope="<?php echo esc_attr( (string) $trip['scope'] ); ?>"
 				data-vertical="<?php echo esc_attr( (string) $trip['vertical'] ); ?>"
 				data-city="<?php echo esc_attr( (string) $trip['city'] ); ?>"
-				data-paid="true"
+				data-paid="<?php echo $is_paid ? 'true' : 'false'; ?>"
 			>
 				<div class="xciv-event-card__date" aria-hidden="true">
 					<span class="xciv-event-card__month"><?php echo esc_html( (string) $trip['month'] ); ?></span>
@@ -76,7 +82,7 @@ $occurrences = EventsCatalog::occurrences( 6 );
 					<p class="xciv-event-card__meta xciv-muted"><?php echo esc_html( (string) $trip['meta'] ); ?></p>
 					<h2 class="xciv-event-card__title">
 						<?php echo esc_html( (string) $trip['title'] ); ?>
-						<span class="xciv-event-card__badge"><?php esc_html_e( 'Paid', 'xciv-social' ); ?></span>
+						<span class="xciv-event-card__badge"><?php echo esc_html( (string) $trip['badge'] ); ?></span>
 					</h2>
 					<p class="xciv-event-card__desc"><?php echo esc_html( (string) $trip['description'] ); ?></p>
 					<div class="xciv-event-card__people">
@@ -84,9 +90,10 @@ $occurrences = EventsCatalog::occurrences( 6 );
 						<span class="xciv-muted">
 							<?php
 							printf(
-								/* translators: %s: host organization */
-								esc_html__( 'Hosted by %s · Club & event', 'xciv-social' ),
-								esc_html( (string) $trip['host_short'] )
+								/* translators: 1: host organization, 2: vertical label */
+								esc_html__( 'Hosted by %1$s · %2$s', 'xciv-social' ),
+								esc_html( (string) $trip['host_short'] ),
+								esc_html( $vertical_label )
 							);
 							?>
 						</span>
@@ -94,7 +101,11 @@ $occurrences = EventsCatalog::occurrences( 6 );
 				</div>
 				<div class="xciv-event-card__actions">
 					<button type="button" class="xciv-btn xciv-btn--ghost" data-event-detail><?php esc_html_e( 'Details', 'xciv-social' ); ?></button>
-					<button type="button" class="xciv-btn xciv-btn--primary" data-purchase aria-pressed="false"><?php esc_html_e( 'Purchase', 'xciv-social' ); ?></button>
+					<?php if ( $is_paid ) : ?>
+						<button type="button" class="xciv-btn xciv-btn--primary" data-purchase aria-pressed="false"><?php esc_html_e( 'Purchase', 'xciv-social' ); ?></button>
+					<?php else : ?>
+						<button type="button" class="xciv-btn xciv-btn--primary" data-rsvp aria-pressed="false"><?php esc_html_e( 'RSVP', 'xciv-social' ); ?></button>
+					<?php endif; ?>
 				</div>
 			</article>
 		<?php endforeach; ?>

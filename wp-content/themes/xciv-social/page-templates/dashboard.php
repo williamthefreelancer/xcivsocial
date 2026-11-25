@@ -24,7 +24,7 @@ $weekday_labels = array(
 	__( 'S', 'xciv-social' ),
 );
 
-$upcoming_trips = EventsCatalog::occurrences( 3 );
+$upcoming_trips = EventsCatalog::occurrences( 4 );
 $mini_cal       = EventsCatalog::dashboard_calendar();
 $calendar_days  = $mini_cal['days'];
 ?>
@@ -176,7 +176,15 @@ $calendar_days  = $mini_cal['days'];
 								<div>
 									<p class="xciv-muted xciv-dashboard-schedule__meta"><?php echo esc_html( (string) $trip['meta'] ); ?></p>
 									<strong><?php echo esc_html( (string) $trip['title'] ); ?></strong>
-									<p class="xciv-muted"><?php esc_html_e( 'Paid · Recurring every 4 months', 'xciv-social' ); ?></p>
+									<p class="xciv-muted">
+										<?php
+										echo esc_html(
+											! empty( $trip['paid'] )
+												? __( 'Paid · Every 4 months', 'xciv-social' )
+												: __( 'Private · Monthly Saturday', 'xciv-social' )
+										);
+										?>
+									</p>
 								</div>
 							</article>
 						<?php endforeach; ?>

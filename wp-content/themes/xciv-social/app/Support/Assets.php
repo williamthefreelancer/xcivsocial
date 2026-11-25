@@ -90,7 +90,7 @@ final class Assets {
 				'xciv-events',
 				'xcivEvents',
 				array(
-					'calendar'    => EventsCatalog::calendar_events( 8 ),
+					'calendar'    => EventsCatalog::calendar_events( 16 ),
 					'initialDate' => $next ? (string) $next['start'] : '',
 				)
 			);
