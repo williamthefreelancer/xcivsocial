@@ -1,0 +1,50 @@
+name: Deploy to xcivsocial.com
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wp-content/themes/xciv-social/**'
+      - 'wp-content/plugins/xciv-social-core/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy theme & plugin
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy XCIV Social theme
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: vps72256.dreamhostps.com
+          username: xcivsocialapp
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          local_path: './wp-content/themes/xciv-social/*'
+          remote_path: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/themes/xciv-social/
+          sftp_only: true
+          delete_remote_files: false
+          sftp_args: '-o StrictHostKeyChecking=no'
+
+      - name: Deploy XCIV Social Core plugin
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: vps72256.dreamhostps.com
+          username: xcivsocialapp
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          local_path: './wp-content/plugins/xciv-social-core/*'
+          remote_path: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/plugins/xciv-social-core/
+          sftp_only: true
+          delete_remote_files: false
+          sftp_args: '-o StrictHostKeyChecking=no'
