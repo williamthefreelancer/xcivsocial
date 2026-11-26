@@ -39,9 +39,12 @@ $logo_url      = XCIV_THEME_URI . '/assets/img/xciv-logo.svg';
 						</svg>
 					</button>
 
-					<a class="xciv-brand" href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">
-						<img class="xciv-brand__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'XCIV Social', 'xciv-social' ); ?>" width="36" height="40">
-					</a>
+					<div class="xciv-header-brand-wrap">
+						<a class="xciv-brand" href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">
+							<img class="xciv-brand__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'XCIV Social', 'xciv-social' ); ?>" width="36" height="40">
+						</a>
+						<?php \XCIV\Theme\Support\ProductSwitcher::render(); ?>
+					</div>
 
 					<div class="xciv-user-menu" data-user-menu>
 						<button
@@ -80,9 +83,12 @@ $logo_url      = XCIV_THEME_URI . '/assets/img/xciv-logo.svg';
 <?php else : ?>
 	<header class="xciv-header">
 		<div class="xciv-header__inner">
-			<a class="xciv-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-				<img class="xciv-brand__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'XCIV Social', 'xciv-social' ); ?>" width="36" height="40">
-			</a>
+			<div class="xciv-header-brand-wrap">
+				<a class="xciv-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+					<img class="xciv-brand__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'XCIV Social', 'xciv-social' ); ?>" width="36" height="40">
+				</a>
+				<?php \XCIV\Theme\Support\ProductSwitcher::render(); ?>
+			</div>
 			<nav class="xciv-nav" aria-label="<?php esc_attr_e( 'Primary', 'xciv-social' ); ?>">
 				<a href="<?php echo esc_url( home_url( '/request-admission/' ) ); ?>"><?php esc_html_e( 'Request Admission', 'xciv-social' ); ?></a>
 				<a href="<?php echo esc_url( wp_login_url() ); ?>"><?php esc_html_e( 'Log in', 'xciv-social' ); ?></a>

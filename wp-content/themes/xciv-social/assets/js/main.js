@@ -9,6 +9,13 @@
   var menuPanel = document.querySelector('[data-user-menu-panel]');
   var sidebarToggle = document.querySelector('[data-sidebar-toggle]');
   var sidebarBackdrop = document.querySelector('[data-sidebar-backdrop]');
+  var productSwitcher = document.querySelector('[data-xciv-product-switcher]');
+  var productTrigger = productSwitcher
+    ? productSwitcher.querySelector('[data-xciv-product-switcher-trigger]')
+    : null;
+  var productMenu = productSwitcher
+    ? productSwitcher.querySelector('[data-xciv-product-switcher-menu]')
+    : null;
 
   function closeUserMenu() {
     if (!menu || !menuToggle || !menuPanel) return;
@@ -19,9 +26,25 @@
 
   function openUserMenu() {
     if (!menu || !menuToggle || !menuPanel) return;
+    closeProductSwitcher();
     menu.classList.add('is-open');
     menuToggle.setAttribute('aria-expanded', 'true');
     menuPanel.hidden = false;
+  }
+
+  function closeProductSwitcher() {
+    if (!productSwitcher || !productTrigger || !productMenu) return;
+    productSwitcher.classList.remove('is-open');
+    productTrigger.setAttribute('aria-expanded', 'false');
+    productMenu.hidden = true;
+  }
+
+  function openProductSwitcher() {
+    if (!productSwitcher || !productTrigger || !productMenu) return;
+    closeUserMenu();
+    productSwitcher.classList.add('is-open');
+    productTrigger.setAttribute('aria-expanded', 'true');
+    productMenu.hidden = false;
   }
 
   if (menuToggle && menuPanel) {
@@ -33,20 +56,35 @@
         closeUserMenu();
       }
     });
+  }
 
-    document.addEventListener('click', function (event) {
-      if (!menu.contains(event.target)) {
-        closeUserMenu();
-      }
-    });
-
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') {
-        closeUserMenu();
-        closeSidebar();
+  if (productTrigger && productMenu) {
+    productTrigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (productSwitcher.classList.contains('is-open')) {
+        closeProductSwitcher();
+      } else {
+        openProductSwitcher();
       }
     });
   }
+
+  document.addEventListener('click', function (event) {
+    if (menu && !menu.contains(event.target)) {
+      closeUserMenu();
+    }
+    if (productSwitcher && !productSwitcher.contains(event.target)) {
+      closeProductSwitcher();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    closeUserMenu();
+    closeProductSwitcher();
+    closeSidebar();
+  });
 
   function openSidebar() {
     if (!body.classList.contains('xciv-app')) return;
