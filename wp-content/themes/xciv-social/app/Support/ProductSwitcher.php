@@ -48,6 +48,16 @@ final class ProductSwitcher {
 				'current'  => false,
 				'external' => true,
 			),
+			array(
+				'id'       => 'holdings',
+				'label'    => __( 'SUPR XCIV Holdings', 'xciv-social' ),
+				'short'    => __( 'Holdings', 'xciv-social' ),
+				'glyph'    => 'H',
+				'blurb'    => __( 'Parent company & platforms', 'xciv-social' ),
+				'url'      => 'https://www.suprxcivplatformholdings.com/',
+				'current'  => false,
+				'external' => true,
+			),
 		);
 
 		/**
