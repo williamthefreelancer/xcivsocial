@@ -49,6 +49,16 @@ final class ProductSwitcher {
 				'external' => true,
 			),
 			array(
+				'id'       => 'litterpickup',
+				'label'    => __( 'Litter Pickup Service', 'xciv-social' ),
+				'short'    => __( 'Litter', 'xciv-social' ),
+				'glyph'    => 'L',
+				'blurb'    => __( 'Exterior litter pickup routes', 'xciv-social' ),
+				'url'      => 'https://www.litterpickupserviceatsuperninetyfour.com/',
+				'current'  => false,
+				'external' => true,
+			),
+			array(
 				'id'       => 'holdings',
 				'label'    => __( 'SUPR XCIV Holdings', 'xciv-social' ),
 				'short'    => __( 'Holdings', 'xciv-social' ),
